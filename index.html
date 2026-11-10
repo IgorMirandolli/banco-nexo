@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Protótipo acadêmico acessível do assistente guiado Nexo Livre para o Banco Nexo."
+    />
+    <title>Nexo Livre — demonstração</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+
+    <div class="site-shell">
+      <header class="topbar" aria-label="Cabeçalho da demonstração">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">N</span>
+          <div>
+            <p class="eyebrow">Banco Nexo</p>
+            <p class="brand-name">Nexo Livre</p>
+          </div>
+        </div>
+
+        <div class="utility-controls" aria-label="Ferramentas de acessibilidade">
+          <div class="font-controls" role="group" aria-label="Tamanho do texto">
+            <button
+              class="icon-button"
+              id="decrease-text"
+              type="button"
+              aria-label="Diminuir tamanho do texto"
+              title="Diminuir texto"
+            >
+              <span aria-hidden="true">A−</span>
+            </button>
+            <span class="font-label" id="font-label" aria-live="polite">Texto 100%</span>
+            <button
+              class="icon-button"
+              id="increase-text"
+              type="button"
+              aria-label="Aumentar tamanho do texto"
+              title="Aumentar texto"
+            >
+              <span aria-hidden="true">A+</span>
+            </button>
+          </div>
+          <button class="outline-button contrast-button" id="contrast-toggle" type="button" aria-pressed="false">
+            <span class="contrast-symbol" aria-hidden="true"></span>
+            Alto contraste
+          </button>
+        </div>
+      </header>
+
+      <div class="demo-banner" role="note" aria-label="Aviso importante">
+        <span class="banner-symbol" aria-hidden="true">i</span>
+        <p><strong>Demonstração acadêmica:</strong> use apenas os dados fictícios mostrados nesta tela. Não informe senha, CPF ou dados de conta.</p>
+      </div>
+
+      <main id="conteudo" class="main-layout">
+        <aside class="context-panel" aria-labelledby="context-title">
+          <div class="context-intro">
+            <span class="section-kicker">Assistência digital</span>
+            <h1 id="context-title">Seu caminho, no seu ritmo.</h1>
+            <p>
+              O Nexo Livre ajuda você a encontrar informações bancárias simples, com explicações claras e uma saída fácil para pedir apoio.
+            </p>
+          </div>
+
+          <div class="promise-list" aria-label="Como o assistente funciona">
+            <article>
+              <span class="promise-icon" aria-hidden="true">1</span>
+              <div>
+                <h2>Poucas escolhas</h2>
+                <p>Você vê opções claras e sabe o que cada uma faz.</p>
+              </div>
+            </article>
+            <article>
+              <span class="promise-icon" aria-hidden="true">2</span>
+              <div>
+                <h2>Sem movimentações</h2>
+                <p>Esta demonstração só consulta e explica informações fictícias.</p>
+              </div>
+            </article>
+            <article>
+              <span class="promise-icon" aria-hidden="true">3</span>
+              <div>
+                <h2>Ajuda sempre por perto</h2>
+                <p>Você pode pedir apoio em qualquer momento.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="accessibility-note">
+            <span aria-hidden="true">⌨</span>
+            <p><strong>Use como preferir.</strong> Todos os botões funcionam com teclado. Você também pode aumentar o texto ou ativar alto contraste.</p>
+          </div>
+        </aside>
+
+        <section class="assistant-card" aria-labelledby="assistant-title">
+          <div class="assistant-header">
+            <div class="assistant-title-group">
+              <span class="assistant-avatar" aria-hidden="true">NL</span>
+              <div>
+                <p class="eyebrow">Assistente guiado</p>
+                <h2 id="assistant-title">Olá, eu sou o Nexo Livre</h2>
+              </div>
+            </div>
+            <div class="connection-status" id="connection-status" role="status">
+              <span class="connection-dot" aria-hidden="true"></span>
+              <span>Conexão de demonstração ativa</span>
+            </div>
+          </div>
+
+          <div class="conversation-wrapper">
+            <div id="conversation" class="conversation" aria-live="off" aria-label="Conversa com o assistente"></div>
+            <p id="live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+          </div>
+
+          <div class="assistant-footer">
+            <button class="text-button" id="connection-test" type="button">
+              <span aria-hidden="true">↯</span>
+              Simular conexão instável
+            </button>
+            <p>Ambiente de teste leve • nenhum dado é enviado</p>
+          </div>
+        </section>
+      </main>
+
+      <nav class="action-dock" aria-label="Ações sempre disponíveis">
+        <div class="action-dock-inner">
+          <p class="dock-copy"><span aria-hidden="true">●</span> Você mantém o controle em cada etapa.</p>
+          <div class="dock-actions">
+            <button class="secondary-button" type="button" data-action="home">
+              <span aria-hidden="true">⌂</span>
+              Início
+            </button>
+            <button class="primary-button" type="button" data-action="help">
+              <span aria-hidden="true">?</span>
+              Pedir ajuda
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
