@@ -4,6 +4,42 @@ Protótipo acadêmico de um banco digital com o assistente guiado **Nexo Livre**
 
 O objetivo é demonstrar como tornar consultas bancárias mais compreensíveis para pessoas com barreiras digitais, preservando a autonomia e oferecendo acesso simples à ajuda.
 
+## Telas do protótipo
+
+### Painel do Banco Nexo
+
+Visão inicial com saldo fictício, atalhos e acesso à ajuda guiada.
+
+![Painel inicial do Banco Nexo com o alto contraste desativado](docs/images/contrateoff.png)
+
+### Assistente, consultas e apoio
+
+| Assistente guiado | Consulta de saldo |
+| --- | --- |
+| ![Nexo Livre com as quatro opções principais e navegação inferior](docs/images/ajudaguiada.png) | ![Consulta de saldo fictício de R$ 1.250,00 com opções para continuar](docs/images/saldo.png) |
+
+| Extrato de exemplo | Solicitação de apoio |
+| --- | --- |
+| ![Extrato fictício com entradas, saídas e botões para entender cada movimentação](docs/images/extrato.png) | ![Ajuda com escolha do motivo e acesso à orientação passo a passo](docs/images/ajuda.png) |
+
+### Dicas de segurança
+
+Orientações simples, explicações alternativas e opções para informar se a dúvida foi resolvida.
+
+![Tela de dicas de segurança do Nexo Livre](docs/images/dicaseguran%C3%A7a.png)
+
+### Alto contraste
+
+Painel com o modo de alto contraste ativado.
+
+![Banco Nexo em alto contraste, com fundo preto e controles destacados](docs/images/contrasteon.png)
+
+### Ajuste do tamanho do texto
+
+Controles A− e A+ para ajustar a leitura.
+
+![Controles de diminuir e aumentar o texto, com tamanho atual de 100%](docs/images/ampliador_texto.png)
+
 ## O que o protótipo faz
 
 ### Painel do banco
@@ -86,6 +122,8 @@ As sessões de teste ficam na memória da aba e são apagadas ao recarregar a p�
 
 ## Organização
 
+As capturas de tela apresentadas acima estão na pasta `docs/images/` e são referenciadas por caminhos relativos.
+
 ```text
 index.html                     Página de entrada
 assets/
@@ -102,6 +140,7 @@ assets/
 tests/                         Testes de lógica e integração com DOM mínimo
 docs/
   GUIA-VALIDACAO.md             Orientações para testes e apresentação
+  images/                      Capturas de tela para este README
 package.json                   Comando para executar os testes
 README.md                      Descrição e instruções de execução
 ```
