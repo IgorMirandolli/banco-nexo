@@ -1,4 +1,4 @@
-/* Métricas locais, somente após consentimento. Sem nomes, mensagens ou credenciais. */
+/* Sessões e métricas locais, após consentimento. Sem nomes, mensagens ou credenciais. */
 (function (root) {
   "use strict";
   function createSession(clock) {

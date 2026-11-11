@@ -1,4 +1,4 @@
-/* Identidade do Banco Nexo: painel bancário azul e amarelo. */
+/* Identidade do Banco Nexo; carregar depois de styles.css. */
 :root { --brand: #064bd9; --brand-dark: #0039a9; --brand-soft: #eaf0ff; --aqua: #064bd9; --aqua-dark: #0039a9; --aqua-soft: #edf2ff; --canvas: #f3f4f6; --ink: #23334b; --muted: #5b6576; --focus: #064bd9; }
 body { font-family: "Segoe UI", Arial, sans-serif; }
 .icon-definitions { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -152,6 +152,48 @@ body.high-contrast .hero-balance, body.high-contrast .bank-section-title { borde
 @media (max-width: 360px) { .service-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .product-content { flex-direction: column; align-items: flex-start; } .mini-bank-card { flex-basis: auto; width: 155px; } }
 
 /* Controles com estado explícito e acesso dentro da ajuda. */
+.consultation-actions {
+  width: min(100%, 30rem);
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d9e5ef;
+  border-radius: 12px;
+}
+.consultation-actions h3 {
+  margin: 0 0 .85rem;
+  color: var(--ink);
+  font-size: .9rem;
+  font-weight: 700;
+}
+.consultation-main button {
+  width: 100%;
+  min-height: 48px;
+  padding: .8rem 1rem;
+  font-size: .9rem;
+  box-shadow: none;
+}
+.consultation-explanations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .65rem;
+  margin-top: .8rem;
+}
+.consultation-explanations button {
+  width: 100%;
+  min-height: 48px;
+  padding: .75rem .65rem;
+  font-size: .82rem;
+  line-height: 1.4;
+  white-space: normal;
+}
+body.high-contrast .consultation-actions {
+  background: #000;
+  border-color: #fff;
+}
+body.large-text .consultation-explanations { grid-template-columns: 1fr; }
+@media (max-width: 420px) {
+  .consultation-explanations { grid-template-columns: 1fr; }
+}
 .research-select { display: flex; flex-direction: column; gap: .5rem; margin: 1rem 0; font-size: .9rem; }
 .research-select select { width: 100%; min-height: 44px; padding: .6rem; border: 1px solid #8a9ab3; border-radius: 4px; background: #fff; color: #23334b; font: inherit; }
 .research-select select:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }

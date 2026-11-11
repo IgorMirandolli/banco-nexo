@@ -1,0 +1,9 @@
+{
+  "name": "nexo-livre-prototipo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Protótipo acadêmico estático do Banco Nexo e assistente Nexo Livre.",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/assistant-flow.test.cjs tests/keyword-router.test.cjs tests/research-assessment.test.cjs tests/statement-data.test.cjs tests/test-session.test.cjs"
+  }
+}

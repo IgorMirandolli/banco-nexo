@@ -1,4 +1,4 @@
-# Nexo Livre — uso e validação do protótipo
+# Nexo Livre — guia de uso e validação do protótipo
 
 ## Correspondência com o relatório
 

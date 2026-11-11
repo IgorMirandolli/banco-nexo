@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const assessment = require("./research-assessment.js");
+const assessment = require("../assets/js/research-assessment.js");
 const pending = assessment.assess();
 assert.equal(pending.experiment1IndividualCriterion, null);
 assert.equal(pending.experiment3.evaluatedPaths, 0);

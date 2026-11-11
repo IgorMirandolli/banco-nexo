@@ -1,3 +1,4 @@
+/* Interface do banco, navegação do assistente e controles da área da equipe. */
 (function () {
   "use strict";
 
@@ -99,6 +100,16 @@
       connectionStatus.innerHTML = '<span class="connection-dot" aria-hidden="true"></span><span>Conexão interrompida</span>';
       connectionStatus.classList.add("is-offline");
     }
+  }
+
+  function consultationActions(isExplanation) {
+    return '<section class="consultation-actions" aria-label="Próximos passos da consulta">' +
+      '<h3>Continue sua consulta</h3>' +
+      '<div class="consultation-main">' + actionButton("statement", "Ver extrato de exemplo", true) + "</div>" +
+      '<div class="consultation-explanations" role="group" aria-label="Opções de explicação">' +
+      actionButton(isExplanation ? "balance" : "explain", isExplanation ? "Consultar saldo" : "Entender o saldo", false) +
+      actionButton("alternative", "Explicar de outro jeito", false) +
+      "</div></section>";
   }
 
   function updateAnnouncer(text) {
@@ -256,13 +267,7 @@
           '<p>Leia assim: <strong>mil duzentos e cinquenta reais</strong>. Saldo mostra o valor disponível; extrato mostra as entradas e saídas.</p>' +
           '<div class="message-details"><strong>Importante:</strong> nenhuma conta real foi consultada e nenhuma transferência foi feita.</div>'
       );
-      html += '<div class="inline-actions">' +
-        actionButton("statement", "Ver extrato de exemplo", false) +
-        actionButton("alternative", "Não entendi, explique de outro jeito", false) +
-        actionButton("explain", "Entender o saldo", false) +
-        actionButton("back", "Voltar", false) +
-        actionButton("help", "Pedir ajuda", true) +
-      "</div>";
+      html += consultationActions(false);
       announcement = "Seu saldo fictício é R$ 1.250,00. Nenhuma conta real foi consultada.";
     }
 
@@ -297,13 +302,7 @@
             '<div><h4>Extrato</h4><p>Mostra as movimentações feitas.</p></div>' +
           "</div>"
       );
-      html += '<div class="inline-actions">' +
-        actionButton("statement", "Ver extrato de exemplo", false) +
-        actionButton("alternative", "Não entendi, explique de outro jeito", false) +
-        actionButton("balance", "Consultar saldo", false) +
-        actionButton("back", "Voltar", false) +
-        actionButton("help", "Pedir ajuda", true) +
-      "</div>";
+      html += consultationActions(true);
       announcement = "Saldo é o valor disponível nesta simulação. Extrato é a lista de movimentações.";
     }
 

@@ -1,4 +1,4 @@
-/* Valores exclusivamente fictícios, em centavos para preservar a soma exata. */
+/* Dados do extrato: valores fictícios, em centavos para preservar a soma exata. */
 (function (root) {
   "use strict";
   var openingCents = 50000;

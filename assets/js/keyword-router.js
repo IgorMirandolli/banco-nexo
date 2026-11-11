@@ -1,4 +1,4 @@
-/* Fluxos locais e predefinidos. Nenhuma mensagem é enviada ou armazenada. */
+/* Reconhecimento local de palavras-chave. Nenhuma mensagem é enviada ou armazenada. */
 (function (root) {
   "use strict";
   function classify(message) {

@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const statement = require("./statement-data.js");
+const statement = require("../assets/js/data/statement-data.js");
 assert.equal(statement.entries.length, 4);
 assert.equal(statement.openingCents, 50000);
 assert.equal(statement.incomingCents, 100000);

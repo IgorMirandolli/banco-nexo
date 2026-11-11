@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const createSession = require("./test-session.js");
+const createSession = require("../assets/js/test-session.js");
 let time = 0;
 const session = createSession(() => time);
 session.record("balance-viewed");

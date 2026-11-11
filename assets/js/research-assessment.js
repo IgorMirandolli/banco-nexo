@@ -1,4 +1,4 @@
-/* Somente opções estruturadas do moderador. Nenhum texto livre é exportado. */
+/* Avaliação dos experimentos: somente opções estruturadas, sem texto livre. */
 (function (root) {
   "use strict";
   var fields = [

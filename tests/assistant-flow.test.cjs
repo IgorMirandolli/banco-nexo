@@ -2,7 +2,8 @@
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
 const fs = require("node:fs");
-const createSession = require("./test-session.js");
+const path = require("node:path");
+const createSession = require("../assets/js/test-session.js");
 let now = 0;
 const metrics = createSession(() => now);
 const nodes = new Map();
@@ -32,9 +33,9 @@ const timers = new Map();
 let timerId = 0;
 const window = {
   NexoTestSession: { create: () => metrics },
-  NexoKeywords: { classify: require("./keyword-router.js") },
-  NexoStatement: require("./statement-data.js"),
-  NexoAssessment: require("./research-assessment.js"),
+  NexoKeywords: { classify: require("../assets/js/keyword-router.js") },
+  NexoStatement: require("../assets/js/data/statement-data.js"),
+  NexoAssessment: require("../assets/js/research-assessment.js"),
   requestAnimationFrame: callback => callback(),
   setTimeout(callback) { timers.set(++timerId, callback); return timerId; },
   clearTimeout: id => timers.delete(id),
@@ -45,7 +46,7 @@ const document = {
   body: node("body"), documentElement: { style: { setProperty() {} } },
   addEventListener: (type, callback) => documentListeners[type] = callback
 };
-vm.runInNewContext(fs.readFileSync("script.js", "utf8"), {
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../assets/js/app.js"), "utf8"), {
   window, document, localStorage: { getItem: () => null, setItem() {} }
 });
 function action(value) {
@@ -68,6 +69,11 @@ assert.match(content(), /cento e cinquenta reais/);
 action("statement");
 action("return-balance");
 assert.match(content(), /Aqui está o seu saldo fictício/);
+assert.match(content(), /Continue sua consulta/);
+assert.match(content(), /consultation-explanations/);
+assert.match(content(), /data-action="statement"/);
+assert.doesNotMatch(content(), /data-action="back"/);
+assert.doesNotMatch(content(), /data-action="help"/);
 node("connection-test").click();
 assert.match(content(), /conexão foi interrompida/);
 action("retry");

@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const classify = require("./keyword-router.js");
+const classify = require("../assets/js/keyword-router.js");
 
 test("reconhece frases, acentos e letras maiúsculas", () => {
   assert.equal(classify("Quero consultar meu SALDO"), "balance");
