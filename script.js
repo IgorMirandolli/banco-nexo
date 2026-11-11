@@ -1,6 +1,11 @@
 (function () {
   "use strict";
 
+  var applicationContent = document.getElementById("application-content");
+  var assistantOverlay = document.getElementById("assistant-overlay");
+  var assistantDrawer = assistantOverlay.querySelector(".assistant-drawer");
+  var drawerTitle = document.getElementById("assistant-drawer-title");
+  var closeAssistantButton = document.getElementById("close-assistant");
   var conversation = document.getElementById("conversation");
   var announcer = document.getElementById("live-announcer");
   var connectionStatus = document.getElementById("connection-status");
@@ -16,15 +21,15 @@
   var textScale = 100;
   var balanceTimer = null;
   var shouldMoveFocus = false;
+  var lastOpener = null;
+  var demoService = "";
 
-  var labels = {
-    home: "Início do assistente",
-    balance: "Consulta de saldo",
-    explain: "Explicação sobre saldo",
-    safety: "Dicas de segurança",
-    help: "Pedido de ajuda",
-    offline: "Conexão interrompida"
-  };
+  document.getElementById("balance-visibility").addEventListener("click", function () {
+    var hidden = this.getAttribute("aria-pressed") !== "true";
+    this.setAttribute("aria-pressed", String(hidden));
+    this.setAttribute("aria-label", hidden ? "Mostrar saldo" : "Ocultar saldo");
+    document.getElementById("dashboard-balance").textContent = hidden ? "R$ ••••••" : "R$ 1.250,00";
+  });
 
   function escapeHtml(value) {
     return String(value)
@@ -74,6 +79,10 @@
   }
 
   function updateAnnouncer(text) {
+    if (assistantOverlay.hidden) {
+      return;
+    }
+
     announcer.textContent = "";
     window.setTimeout(function () {
       announcer.textContent = text;
@@ -81,7 +90,7 @@
   }
 
   function focusCurrentMessage() {
-    if (!shouldMoveFocus) {
+    if (!shouldMoveFocus || assistantOverlay.hidden) {
       return;
     }
 
@@ -94,25 +103,55 @@
     });
   }
 
+  function clearBalanceTimer() {
+    if (balanceTimer !== null) {
+      window.clearTimeout(balanceTimer);
+      balanceTimer = null;
+    }
+  }
+
+  function startBalanceTimer() {
+    clearBalanceTimer();
+    balanceTimer = window.setTimeout(function () {
+      if (currentState === "loading-balance" && !assistantOverlay.hidden) {
+        currentState = "balance";
+        shouldMoveFocus = true;
+        render();
+      }
+    }, 700);
+  }
+
   function render() {
     var html = "";
     var announcement = "";
+
+    if (currentState === "service") {
+      setConnection(true);
+      html += messageCard(
+        "Área demonstrativa",
+        demoService,
+        "<p>Esta área faz parte da apresentação visual do Banco Nexo. O protótipo não realiza pagamentos, transferências ou contratação de produtos.</p>" +
+        "<div class=\"message-details\"><strong>Conheça o Nexo Livre.</strong> Use a ajuda guiada para consultar o saldo fictício, entender informações ou solicitar apoio humano simulado.</div>"
+      );
+      html += '<div class="inline-actions">' + actionButton("home", "Abrir ajuda guiada", true) + actionButton("close", "Voltar ao banco", false) + "</div>";
+      announcement = demoService + ". Área demonstrativa. Nenhuma transação está disponível.";
+    }
 
     if (currentState === "home") {
       setConnection(true);
       html += messageCard(
         "Nexo Livre",
-        "O que você quer fazer?",
-        '<p>Esta é uma demonstração com dados fictícios. Escolha uma opção. Nenhuma ação aqui movimenta dinheiro.</p>' +
-          '<div class="message-details"><strong>Você está no controle.</strong> Se tiver dúvida, use “Pedir ajuda” a qualquer momento.</div>'
+        "Olá. Como posso ajudar?",
+        '<p>Estou aqui para explicar informações desta demonstração. Escolha uma opção; nenhuma delas movimenta dinheiro.</p>' +
+          '<div class="message-details"><strong>Você está no controle.</strong> Se tiver dúvida, pode pedir ajuda em qualquer momento.</div>'
       );
-      html += '<div class="option-grid" aria-label="Opções disponíveis">' +
+      html += '<div class="option-grid" aria-label="Opções do assistente">' +
         option("balance", "R$", "Consultar saldo", "Ver um valor fictício") +
         option("explain", "≡", "Entender o saldo", "Saber a diferença para extrato") +
         option("safety", "✓", "Dicas de segurança", "Proteger seus dados") +
         option("help", "?", "Pedir ajuda", "Solicitar apoio humano simulado") +
       "</div>";
-      announcement = "Início do Nexo Livre. Escolha uma das quatro opções.";
+      announcement = "Nexo Livre aberto. Escolha uma das quatro opções.";
     }
 
     if (currentState === "loading-balance") {
@@ -190,8 +229,8 @@
           '<div class="protocol-card"><p><strong>Encaminhamento simulado</strong></p><span class="protocol-number">PROTOCOLO DEMO 001</span><p>Nenhum atendimento real foi aberto e nenhum dado seu foi enviado.</p></div>'
       );
       html += '<div class="inline-actions">' +
-        actionButton("home", "Ir para o início", false) +
-        actionButton("back", "Voltar", false) +
+        actionButton("home", "Voltar ao início da ajuda", false) +
+        actionButton("close", "Fechar ajuda", false) +
       "</div>";
       announcement = "Encaminhamento simulado. Protocolo DEMO 001. Nenhum atendimento real foi aberto.";
     }
@@ -217,13 +256,6 @@
     focusCurrentMessage();
   }
 
-  function clearBalanceTimer() {
-    if (balanceTimer !== null) {
-      window.clearTimeout(balanceTimer);
-      balanceTimer = null;
-    }
-  }
-
   function goTo(nextState, remember) {
     clearBalanceTimer();
 
@@ -236,17 +268,51 @@
     render();
 
     if (nextState === "loading-balance") {
-      balanceTimer = window.setTimeout(function () {
-        if (currentState === "loading-balance") {
-          currentState = "balance";
-          shouldMoveFocus = true;
-          render();
-        }
-      }, 850);
+      startBalanceTimer();
+    }
+  }
+
+  function openAssistant(requestedState, opener) {
+    clearBalanceTimer();
+    lastOpener = opener || document.activeElement;
+    history = [];
+    currentState = requestedState === "balance" ? "loading-balance" : (requestedState || "home");
+    previousState = currentState;
+    shouldMoveFocus = false;
+
+    assistantOverlay.hidden = false;
+    applicationContent.setAttribute("inert", "");
+    applicationContent.setAttribute("aria-hidden", "true");
+    document.body.classList.add("drawer-open");
+    render();
+
+    if (currentState === "loading-balance") {
+      startBalanceTimer();
+    }
+
+    window.requestAnimationFrame(function () {
+      drawerTitle.focus({ preventScroll: true });
+    });
+  }
+
+  function closeAssistant() {
+    clearBalanceTimer();
+    assistantOverlay.hidden = true;
+    applicationContent.removeAttribute("inert");
+    applicationContent.removeAttribute("aria-hidden");
+    document.body.classList.remove("drawer-open");
+
+    if (lastOpener && typeof lastOpener.focus === "function") {
+      lastOpener.focus({ preventScroll: true });
     }
   }
 
   function handleAction(action) {
+    if (action === "close") {
+      closeAssistant();
+      return;
+    }
+
     if (action === "home") {
       history = [];
       goTo("home", false);
@@ -275,17 +341,81 @@
     }
   }
 
+  function getFocusableDrawerElements() {
+    return Array.prototype.slice.call(
+      assistantDrawer.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+  }
+
   document.addEventListener("click", function (event) {
+    var serviceControl = event.target.closest("[data-demo-service]");
+    if (serviceControl) {
+      demoService = serviceControl.getAttribute("data-demo-service");
+      openAssistant("service", serviceControl);
+      return;
+    }
+    var contrastControl = event.target.closest("[data-toggle-contrast]");
+    if (contrastControl) {
+      contrastToggle.click();
+      return;
+    }
+    var openControl = event.target.closest("[data-open-assistant]");
+    if (openControl) {
+      openAssistant(openControl.getAttribute("data-assistant-state") || "home", openControl);
+      return;
+    }
+
     var actionControl = event.target.closest("[data-action]");
-    if (actionControl) {
+    if (actionControl && !assistantOverlay.hidden) {
       handleAction(actionControl.getAttribute("data-action"));
     }
   });
 
-  connectionTest.addEventListener("click", function () {
-    if (currentState === "offline") {
+  closeAssistantButton.addEventListener("click", closeAssistant);
+
+  assistantOverlay.addEventListener("click", function (event) {
+    if (event.target === assistantOverlay) {
+      closeAssistant();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (assistantOverlay.hidden) {
       return;
     }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAssistant();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      var focusable = getFocusableDrawerElements();
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+
+      if (!focusable.length) {
+        return;
+      }
+
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === drawerTitle)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  connectionTest.addEventListener("click", function () {
+    if (assistantOverlay.hidden || currentState === "offline") {
+      return;
+    }
+
     clearBalanceTimer();
     previousState = currentState;
     currentState = "offline";
@@ -299,7 +429,8 @@
     contrastToggle.innerHTML =
       '<span class="contrast-symbol" aria-hidden="true"></span>' +
       (isHighContrast ? "Contraste padrão" : "Alto contraste");
-    updateAnnouncer(isHighContrast ? "Alto contraste ativado." : "Alto contraste desativado.");
+    document.querySelector("[data-toggle-contrast]").textContent =
+      isHighContrast ? "Usar contraste padrão →" : "Ativar alto contraste →";
   });
 
   function updateTextScale(nextScale) {
@@ -308,7 +439,10 @@
     fontLabel.textContent = "Texto " + textScale + "%";
     decreaseText.disabled = textScale === 90;
     increaseText.disabled = textScale === 130;
-    updateAnnouncer("Tamanho do texto ajustado para " + textScale + " por cento.");
+
+    if (!assistantOverlay.hidden) {
+      updateAnnouncer("Tamanho do texto ajustado para " + textScale + " por cento.");
+    }
   }
 
   increaseText.addEventListener("click", function () {
@@ -319,5 +453,6 @@
     updateTextScale(textScale - 10);
   });
 
+  updateTextScale(100);
   render();
 }());
