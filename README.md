@@ -1,178 +1,232 @@
-# Banco Nexo — Meu Assistente Nexo
+# Banco Nexo · Meu Assistente Nexo
 
-Versão experimental do protótipo, desenvolvida na branch `experimento/novas-mudancas`. O painel do banco mantém o ajuste de fonte e o alto contraste e passa a oferecer um chatbot simples em uma janela flutuante.
+Protótipo acadêmico de banco digital desenvolvido em **HTML, CSS e JavaScript** para o Projeto Integrador Semestral A3, Equipe 4, caso IncluiTech.
 
-A identidade visual usa verde-petróleo, tons de menta e um monograma N com pontos de conexão, compartilhado pelo banco e pelo assistente. O painel acompanha a largura da tela do computador; no celular, os elementos são reorganizados para manter a leitura e o acesso aos controles.
+A proposta é facilitar o acesso às informações bancárias com linguagem simples, recursos de acessibilidade e um assistente que responde por **botões, texto e consultas por voz**. O banco também oferece operações fictícias para tornar a demonstração mais próxima de uma experiência de uso.
 
-## O que mudou nesta versão
+**Todos os dados, valores, destinatários, chamados e operações são demonstrativos.**
 
-O assistente guiado anterior, os percursos por etapas e a área de avaliação da equipe foram retirados desta branch. A versão anterior continua no histórico e na branch `main`.
+## Interface atual
 
-O novo **Meu Assistente Nexo** tem:
+A identidade do Nexo usa verde-petróleo e menta, com um monograma “N” formado por pontos de conexão. O painel utiliza a largura disponível no computador e reorganiza o conteúdo em telas menores.
 
-- Botão flutuante para abrir a conversa.
-- Janela arredondada, apresentada como uma folha inferior no celular.
-- Saudação inicial, sugestões rápidas e campo de mensagem.
-- Histórico de perguntas e respostas durante a permanência na página.
-- Reconhecimento local de palavras-chave e respostas predefinidas.
-- Opção de iniciar uma nova conversa.
-- Acesso às preferências de fonte e contraste no menu de três pontos.
-- Consulta por voz opcional, com consentimento antes do microfone.
-- Leitura das respostas em português, com controles para repetir e parar.
+![Painel do Banco Nexo com saldo fictício, atalhos de serviços e botão flutuante do assistente](docs/images/imagens2.0/hub.png)
 
-O chatbot usa respostas predefinidas e não requer conta de serviço nem chave de API. A voz utiliza os recursos do navegador e pode depender de serviços do fornecedor.
+## Como iniciar
 
-## Assuntos atendidos
+### Opção recomendada: servidor local
 
-| Assunto | O que o assistente demonstra |
-| --- | --- |
-| Extrato | Lista de entradas e saídas fictícias e acesso à área do extrato. |
-| Saldo | Consulta do saldo fictício atualizado após as simulações. O valor inicial é R$ 1.250,00. |
-| Pagar | Escolha de conta fictícia, revisão, confirmação e comprovante simulado. |
-| Pix | Seleção de destinatário fictício e valor, com revisão e débito apenas na conta de demonstração. |
-| Transferências | Seleção de conta fictícia e valor, revisão e comprovante local. |
-| Cartões | Limite e fatura fictícios, com explicação da diferença para saldo. |
-| Ajuda básica | Segurança, acessibilidade, finalidade do assistente e abertura de chamado simulada. |
+Requisito: **Node.js 24 ou superior** instalado.
 
-Exemplos de mensagens: “ver meu extrato”, “como pagar um boleto?”, “fazer Pix”, “como fazer uma transferência?” e “qual o limite do cartão?”.
-
-As sugestões também funcionam sem digitar. Quando encontra mais de um assunto ou não reconhece uma pergunta, o chatbot oferece opções para continuar.
-
-O botão de chamado no cabeçalho do chat e as sugestões **Abrir chamado** levam à confirmação de abertura. Ao confirmar, o assistente apresenta o protocolo fictício **DEMO 001**. Esse fluxo não abre conversa com atendente nem registra um chamado real.
-
-## Simular operações
-
-1. No painel, escolha **Pagar**, **Pix** ou **Transferências**.
-2. Escolha uma conta ou um destinatário fictício. Para Pix e transferências, informe o valor; o pagamento usa o valor fixo da conta selecionada.
-3. Clique em **Continuar para revisão**. Até aqui, nada é descontado.
-4. Confira os dados. Você pode editar ou cancelar.
-5. Confirme a operação simulada para receber um comprovante fictício e atualizar o saldo e o extrato.
-
-O sistema rejeita valores inválidos, saldo insuficiente e o pagamento repetido da mesma conta na sessão. Repetir uma confirmação não gera outro débito.
-
-Use **Reiniciar simulação**, no rodapé, e confirme para restaurar os dados iniciais. Recarregar a página também reinicia o saldo, as operações e a conversa. **Nova conversa**, no chat, limpa somente o histórico da conversa.
-
-## Abrir o projeto
-
-### Com voz
-
-Com Node.js 24 ou superior instalado, execute na pasta do projeto:
+Abra o terminal na pasta do projeto e execute:
 
 ```powershell
 npm start
 ```
 
-Abra **http://localhost:5500**. Não é necessário executar `npm install`. Use `Ctrl + C` no terminal para encerrar o servidor. Ele escuta apenas na máquina local.
+Depois, acesse **[http://localhost:5500](http://localhost:5500)** no navegador.
 
-Para usar o microfone:
+- Não é necessário executar `npm install`: o projeto não possui dependências externas.
+- O servidor atende somente na máquina local.
+- Para encerrar, pressione `Ctrl + C` no terminal.
+- Após atualizar os arquivos, use `Ctrl + F5` para recarregar a página.
 
-1. Abra o chat e toque no ícone de microfone.
-2. Leia ou ouça a explicação e escolha **Ativar e falar**.
-3. Autorize o microfone no navegador, se solicitado.
-4. Diga, por exemplo, **“quero ver meu extrato”**, **“qual é meu saldo?”** ou **“onde fica o Pix?”**.
+O servidor local é necessário para testar o microfone nesta implementação. Também é possível usar a extensão Live Server do VS Code.
 
-A fala é usada apenas para consultar informações e receber orientações no chat. Não abre áreas automaticamente, preenche formulários, confirma operações, reinicia dados ou abre chamados.
+### Abrir diretamente, sem reconhecimento de fala
 
-Cada captura aceita uma consulta e termina após o resultado, interrupção ou até 15 segundos. Você pode parar a captura e usar **Desativar voz** para retirar a autorização do protótipo nesta página. Isso não altera a permissão geral do navegador.
-
-Respostas às consultas por voz podem ser lidas automaticamente, conforme a opção apresentada antes de ativar. Cada resposta também oferece **Ouvir resposta**, quando o navegador permite leitura, e o controle **Parar áudio** interrompe a reprodução. Fechar ou limpar o chat, sair da página ou ocultar a aba interrompe a voz.
-
-O suporte varia conforme o navegador, o dispositivo, as vozes instaladas e a conectividade. O serviço de reconhecimento pode enviar o áudio ao fornecedor do navegador. Não fale dados pessoais. O protótipo não salva gravações, e a autorização de voz não é persistida. Se houver falha, as sugestões e a digitação continuam disponíveis.
-
-### Sem voz, abrindo o arquivo
-
-Abra a pasta no VS Code e execute no terminal PowerShell:
+No PowerShell, na pasta do projeto:
 
 ```powershell
 Start-Process .\index.html
 ```
 
-Também é possível abrir `index.html` com dois cliques ou usar **Open with Live Server**, se a extensão já estiver instalada.
+Outra opção é abrir `index.html` com dois cliques. Mantenha a pasta `assets` junto do HTML.
 
-Não é necessário executar `npm install`, instalar dependências ou compilar. Mantenha a pasta `assets` junto do HTML. Depois de alterações, use `Ctrl + F5` para recarregar.
+Ao abrir como arquivo (`file://`), o painel, as simulações e o chat por texto continuam disponíveis, mas a captura de voz fica desabilitada. A leitura das respostas depende do suporte do navegador e pode continuar disponível.
 
-Ao abrir como arquivo (`file://`), o reconhecimento de fala fica desabilitado com uma orientação para usar o servidor local. Live Server também pode ser usado para testar voz.
+## Funcionalidades do banco
+
+| Área | O que é possível fazer |
+| --- | --- |
+| Saldo | Consultar, mostrar ou ocultar o saldo fictício, atualizado após as simulações. |
+| Extrato | Ver o histórico inicial e as movimentações simuladas durante a sessão. |
+| Pagar | Escolher uma conta fictícia, revisar os dados e confirmar o pagamento simulado. |
+| Pix | Escolher um destinatário fictício e um valor, revisar e confirmar o envio simulado. |
+| Transferências | Selecionar uma conta de exemplo, informar o valor e confirmar uma transferência simulada. |
+| Cartões | Consultar limite e fatura fictícios e receber explicações do assistente. |
+| Segurança | Ler orientações básicas sobre proteção de informações e uso dos canais oficiais. |
+
+O saldo inicial da demonstração é **R$ 1.250,00**, com quatro movimentações fictícias no extrato.
+
+### Operações simuladas
+
+Os botões **Pagar**, **Pix** e **Transferências** abrem um fluxo de três etapas:
+
+1. **Preencher:** escolher uma conta ou destinatário da lista. Pix e transferências permitem informar o valor; pagamentos usam o valor fixo da conta escolhida.
+2. **Revisar:** conferir destino, valor, tarifa e saldo projetado. É possível editar ou cancelar sem descontar nada.
+3. **Confirmar:** receber um comprovante fictício e atualizar o saldo e o extrato desta aba.
+
+O sistema valida valores, impede operações acima do saldo disponível e evita débitos duplicados na confirmação. A mesma conta de exemplo não pode ser paga duas vezes na sessão.
+
+O comprovante apresenta valor, destino fictício, data da simulação, identificador e saldo atualizado. Ele **não tem validade bancária**.
+
+### Reiniciar a demonstração
+
+No rodapé, use **Reiniciar simulação** e confirme para restaurar o saldo inicial, remover as operações da sessão e limpar a conversa.
+
+Recarregar a página também reinicia esses dados. A opção **Nova conversa**, no menu do assistente, limpa somente o histórico do chat, sem desfazer as operações simuladas.
+
+## Meu Assistente Nexo
+
+O antigo assistente guiado foi substituído por uma conversa em janela flutuante. Ela mantém o histórico enquanto a página está aberta e oferece sugestões para começar ou continuar uma dúvida.
+
+Abra pelo botão **Assistente Nexo**, pelo atalho **Assistente** ou pelos botões de ajuda das áreas do banco.
+
+<p align="center">
+  <img src="docs/images/imagens2.0/assistente.png" alt="Tela inicial do Meu Assistente Nexo com saudação, sugestões, campo de mensagem e microfone" width="440" />
+</p>
+
+### Consultar por botões ou texto
+
+O chatbot reconhece palavras-chave e responde com conteúdo predefinido. **Não utiliza IA generativa e não exige chave de API.**
+
+| Assunto | Exemplo de mensagem |
+| --- | --- |
+| Extrato | “Onde ver o meu extrato?” |
+| Saldo | “Qual é meu saldo?” |
+| Pix | “Como fazer um Pix?” |
+| Pagamentos | “Como pagar um boleto?” |
+| Transferências | “Como fazer uma transferência?” |
+| Cartões | “Qual é o limite do cartão?” |
+| Segurança | “Como evitar golpes?” |
+| Acessibilidade | “Quero aumentar a letra” |
+| Chamados | “Quero abrir um chamado” |
+
+Quando a mensagem não é reconhecida ou contém assuntos diferentes, o assistente oferece opções para continuar. As respostas sobre saldo e extrato refletem as simulações já confirmadas.
+
+| Consulta por botões | Consulta por texto |
+| --- | --- |
+| ![Consulta sobre cartões acionada pelo botão, com valores fictícios, sugestões e opção de ouvir a resposta](docs/images/imagens2.0/assistenteviabotao.png) | ![Pergunta digitada sobre extrato e resposta com as movimentações fictícias](docs/images/imagens2.0/assistenteviatexto.png) |
+
+### Consultar por voz
+
+A voz é opcional e serve **apenas para consultar informações e receber orientações dentro do chatbot**.
+
+Para ativar:
+
+1. Inicie o projeto com `npm start` e abra `http://localhost:5500`.
+2. Abra o assistente e toque no microfone.
+3. Leia ou use **Ouvir explicação** para conhecer o funcionamento.
+4. Escolha **Ativar e falar** e autorize o microfone no navegador.
+5. Diga, por exemplo, **“quero ver meu extrato”**, **“qual é meu saldo?”** ou **“onde fica o Pix?”**.
+
+Uma consulta por voz não abre áreas automaticamente, preenche formulários, confirma operações, reinicia a simulação ou abre chamados. As operações continuam dependendo da interação pelos controles na tela.
+
+Cada captura termina ao receber a consulta, ao ser interrompida ou após até **15 segundos**. É possível usar **Parar áudio** e **Desativar voz**. Fechar ou limpar o chat, ocultar a aba ou sair da página interrompe a captura e a leitura.
+
+A autorização do protótipo vale somente para a página atual. Desativá-la aqui não muda a permissão geral já concedida ao navegador.
+
+### Ouvir as respostas
+
+Quando há suporte à leitura, cada resposta apresenta o botão **Ouvir resposta**. Ele lê o título e o conteúdo em português, incluindo as informações do extrato quando presentes.
+
+Também é possível:
+
+- Ouvir a resposta novamente.
+- Interromper usando **Parar áudio**.
+- Escolher a leitura automática após uma consulta por voz.
+
+**Ouvir resposta não exige autorização do microfone.** A leitura e o reconhecimento da fala são recursos separados.
+
+O suporte depende do navegador, das vozes disponíveis, do dispositivo e da conectividade. O reconhecimento pode usar servidores do fornecedor do navegador. O aviso antes da ativação explica essa possibilidade; não fale informações pessoais.
+
+### Abertura de chamados
+
+O ícone de chamado no cabeçalho do chat e as sugestões **Abrir chamado** apresentam apenas a confirmação de abertura.
+
+Ao confirmar, o assistente mostra o protocolo fictício **DEMO 001**. Não há conversa com atendente, envio a uma central ou registro de chamado real.
 
 ## Acessibilidade
 
-- Ajuste de texto de 90% a 200%.
-- Alto contraste no painel e no menu do chat, com preferência salva no navegador.
-- Histórico preparado para anúncio de novas mensagens por leitor de tela.
-- Controles por teclado, fechamento com `Esc` e retorno de foco ao ponto de abertura.
+O protótipo mantém os seguintes recursos:
 
-Os testes de lógica não substituem a inspeção visual, o uso de leitor de tela ou a avaliação com participantes.
+- Ajuste do texto entre **90% e 200%**, no painel e nas preferências do chat.
+- **Alto contraste**, com indicação de ativado ou desativado e preferência salva no navegador.
+- Navegação por teclado, foco visível e fechamento do chat com `Esc`.
+- Retorno de foco ao controle que abriu o assistente.
+- Histórico preparado para anunciar novas mensagens a leitores de tela.
+- Consultas por voz e leitura das respostas, quando disponíveis.
 
-## Dados e limites
+### Painel com alto contraste
 
-Todos os valores e movimentações são fictícios. Pagamentos, Pix e transferências alteram apenas a conta de demonstração em memória. Não há transações bancárias reais, bloqueio de cartão ou atendimento real.
+![Banco Nexo com alto contraste ativado, fundo preto, textos claros e controles destacados](docs/images/imagens2.0/hubcontraste.png)
 
-O chat orienta e abre as áreas demonstrativas do painel. Não solicita dados bancários nem consulta contas reais. Mensagens com padrões evidentes de dados pessoais, como CPF, endereço de e-mail ou senha declarada, recebem orientação sem serem adicionadas ao histórico. Essa checagem é limitada; não informe informações pessoais mesmo assim.
+### Controle de fonte
 
-A conversa fica somente na memória da página, limitada às últimas 40 mensagens, e é apagada ao recarregar ou selecionar **Nova conversa**. Fechar e reabrir a janela preserva a conversa enquanto a página permanece aberta. O código do chatbot não envia mensagens a um backend. Ao autorizar voz, o navegador pode processar o áudio e a leitura por serviços do seu fornecedor. Apenas a preferência de alto contraste é salva localmente.
+Use **A−** para diminuir e **A+** para aumentar o texto. O valor central indica o ajuste atual.
 
-## Organização
+![Controle de tamanho do texto com os botões A− e A+ e indicação de 100%](docs/images/imagens2.0/configura%C3%A7aofonte.png)
+
+Esses recursos não representam certificação de acessibilidade. Os testes de lógica precisam ser complementados por avaliação visual, uso de teclado, leitores de tela e testes com participantes.
+
+## Dados, privacidade e limites
+
+- Todas as movimentações e informações bancárias são fictícias.
+- O código não acessa contas, envia dinheiro ou se conecta a APIs bancárias.
+- As operações e o histórico do chat ficam somente na memória da página.
+- A conversa mantém até as últimas **40 mensagens**.
+- O código do chatbot não envia mensagens a um backend.
+- O reconhecimento de voz pode enviar áudio ao serviço do fornecedor do navegador; a leitura também depende dos recursos e serviços disponíveis.
+- O protótipo não salva gravações de áudio nem persiste a autorização de voz.
+- Mensagens com padrões evidentes de dados pessoais, como CPF, e-mail ou senha declarada, recebem orientação sem serem adicionadas ao histórico. Essa checagem é limitada: **não informe dados reais**.
+- Apenas a preferência de alto contraste é salva localmente no navegador.
+
+Esta versão experimental amplia o recorte original do relatório com novos assuntos, operações simuladas e voz. Ela demonstra possibilidades de interface; não comprova segurança bancária de produção, atendimento real ou validação de mercado.
+
+## Organização do projeto
 
 ```text
 index.html
 assets/
   css/
     styles.css                 Base e acessibilidade
-    bank.css                   Painel bancário e responsividade
-    chat.css                   Janela e mensagens do chatbot
+    bank.css                   Painel e operações simuladas
+    chat.css                   Chat, mensagens e controles de voz
   js/
-    app.js                     Interface, conversa e preferências
-    chat-engine.js             Reconhecimento de assuntos e respostas
-    transactions.js            Conta simulada, validações e comprovantes
+    app.js                     Interface, eventos e integração dos recursos
+    chat-engine.js             Palavras-chave e respostas do assistente
+    transactions.js            Conta fictícia, validações e comprovantes
     voice.js                   Captura consentida e leitura de respostas
     data/
-      statement-data.js        Movimentações fictícias
-tests/
-  chat-engine.test.cjs          Regras e respostas do chatbot
-  chat-interface.test.cjs       Fluxos com DOM mínimo e referências do HTML
-  statement-data.test.cjs       Coerência dos valores do extrato
-  transactions.test.cjs         Débitos, confirmações, cancelamento e reinício
-  voice.test.cjs                Consentimento, captura, leitura e erros de voz
-  server.test.cjs               Restrição dos caminhos do servidor local
+      statement-data.js        Histórico fictício inicial
 scripts/
   serve.cjs                    Servidor local sem dependências
+tests/
+  chat-engine.test.cjs
+  chat-interface.test.cjs
+  statement-data.test.cjs
+  transactions.test.cjs
+  voice.test.cjs
+  server.test.cjs
 docs/
-  GUIA-VALIDACAO.md             Verificação da versão experimental
-  images/                      Capturas preservadas da versão anterior
+  GUIA-VALIDACAO.md             Roteiro de verificação
+  images/
+    imagens2.0/                Capturas da interface atual
 package.json
 README.md
 ```
 
-## Testar
+As capturas antigas continuam na pasta `docs/images/`, mas este README apresenta somente as novas imagens de `docs/images/imagens2.0/`.
 
-Com Node.js 24 ou superior instalado, execute:
+## Testes
+
+Na pasta do projeto, com Node.js 24 ou superior:
 
 ```powershell
 npm test
 ```
 
-Os testes usam somente recursos do Node.js. Veja também o [roteiro de verificação](docs/GUIA-VALIDACAO.md).
+Os testes usam recursos do próprio Node.js e cobrem reconhecimento de assuntos, respostas, integração com DOM mínimo, operações simuladas, coerência do extrato, controle da voz com APIs simuladas e restrições dos caminhos do servidor local.
 
-## Capturas da versão anterior
-
-As imagens abaixo foram preservadas como referência histórica. Ainda não representam o novo chatbot desta branch.
-
-<details>
-<summary>Ver as capturas anteriores</summary>
-
-![Painel anterior do Banco Nexo](docs/images/contrateoff.png)
-
-| Assistente anterior | Consulta de saldo anterior |
-| --- | --- |
-| ![Assistente guiado anterior](docs/images/ajudaguiada.png) | ![Saldo na versão anterior](docs/images/saldo.png) |
-
-| Extrato anterior | Apoio anterior |
-| --- | --- |
-| ![Extrato anterior](docs/images/extrato.png) | ![Apoio anterior](docs/images/ajuda.png) |
-
-![Dicas de segurança anteriores](docs/images/dicaseguran%C3%A7a.png)
-
-![Modo de alto contraste anterior](docs/images/contrasteon.png)
-
-![Ajuste de texto anterior](docs/images/ampliador_texto.png)
-
-</details>
+Eles não verificam a qualidade real da captação, a reprodução de áudio no dispositivo ou a renderização visual. Consulte o [guia de validação](docs/GUIA-VALIDACAO.md) para os testes manuais.
