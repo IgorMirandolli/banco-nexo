@@ -94,7 +94,7 @@ test("preferências, saldo oculto, Escape e retirada dos fluxos antigos", () => 
   assert.equal(node("status-chat").textContent, "Ativado");
   assert.deepEqual(writes, [["nexo-contrast", "on"]]);
   for (let i = 0; i < 12; i++) click({ font: "10" });
-  assert.equal(doc.documentElement.style.fontSize, "200%");
+  assert.equal(doc.documentElement.style.fontSize, "225%");
   assert.equal(node("font-plus").disabled, true);
   const eye = node("balance-visibility");
   eye.listeners.click.call(eye);

@@ -43,7 +43,7 @@
   }
   function changeScale(amount) {
     scale = Math.max(90, Math.min(200, scale + amount));
-    document.documentElement.style.fontSize = scale + "%";
+    document.documentElement.style.fontSize = (scale * 1.125) + "%";
     document.body.classList.toggle("large-text", scale >= 150);
     document.getElementById("font-label").textContent = scale + "%";
     document.querySelector("[data-chat-font]").textContent = scale + "%";

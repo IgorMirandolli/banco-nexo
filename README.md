@@ -2,6 +2,8 @@
 
 Versão experimental do protótipo, desenvolvida na branch `experimento/novas-mudancas`. O painel do banco mantém o ajuste de fonte e o alto contraste e passa a oferecer um chatbot simples em uma janela flutuante.
 
+A identidade visual usa verde-petróleo, tons de menta e um monograma N com pontos de conexão, compartilhado pelo banco e pelo assistente. O painel acompanha a largura da tela do computador; no celular, os elementos são reorganizados para manter a leitura e o acesso aos controles.
+
 ## O que mudou nesta versão
 
 O assistente guiado anterior, os percursos por etapas e a área de avaliação da equipe foram retirados desta branch. A versão anterior continua no histórico e na branch `main`.

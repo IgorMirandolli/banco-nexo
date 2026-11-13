@@ -1,13 +1,14 @@
 /* Base compartilhada: tipografia, controles e preferências de acessibilidade. */
 :root {
-  --page: #f4f5f8; --surface: #fff; --ink: #202c42; --muted: #5e6b7e;
-  --border: #dde3ec; --brand: #064bd9; --on-brand: #fff; --soft: #edf2ff;
-  --hero: #064bd9; --on-hero: #fff; --hero-muted: #d7e5ff; --yellow: #ffdf00;
-  --accent: #4055ef; --on-accent: #fff; --chat-page: #f8f9fc; --bot: #fff;
-  --incoming: #006a50; --outgoing: #93411d; --focus: #0758d8; --shadow: 0 16px 50px #102b5b14;
+  --page: #f0f5f3; --surface: #fff; --ink: #173631; --muted: #566f68;
+  --border: #d6e4de; --brand: #0c625e; --on-brand: #fff; --soft: #e9f5f0;
+  --hero: #093f43; --on-hero: #fff; --hero-muted: #c5e6df; --highlight: #9ae9cd;
+  --hero-line: #69a8a3; --accent: #116b62; --on-accent: #fff; --chat-page: #f5f9f7; --bot: #fff;
+  --incoming: #12634c; --outgoing: #93411d; --focus: #08796b; --shadow: 0 16px 50px #123b3014;
+  --page-gutter: clamp(20px, 2.5vw, 64px);
 }
 * { box-sizing: border-box; }
-html { font-size: 100%; }
+html { font-size: 112.5%; }
 body { margin: 0; color: var(--ink); background: var(--page); font-family: "Segoe UI", Arial, sans-serif; line-height: 1.5; }
 button, input, summary { font: inherit; }
 button, summary { cursor: pointer; }
@@ -29,11 +30,12 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .contrast-control { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--border); font-size: .8rem; }
 .contrast-control:hover { border-color: var(--brand); }
 .contrast-state { font-size: .75rem; padding: 2px 5px; border-radius: 3px; background: var(--soft); color: var(--brand); }
-.contrast-control[aria-pressed="true"] { border-color: var(--yellow); }
+.contrast-control[aria-pressed="true"] { border-color: var(--highlight); }
 body.high-contrast {
   --page: #000; --surface: #000; --ink: #fff; --muted: #eee; --border: #fff;
   --brand: #ffdf00; --on-brand: #000; --soft: #191919; --hero: #000;
   --on-hero: #fff; --hero-muted: #eee; --accent: #ffdf00; --on-accent: #000;
+  --highlight: #ffdf00; --hero-line: #fff;
   --chat-page: #000; --bot: #000; --incoming: #fff; --outgoing: #fff;
   --focus: #00e5ff; --shadow: none;
 }
