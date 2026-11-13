@@ -25,16 +25,30 @@ Não utiliza IA, conta de serviço externo ou API.
 | Assunto | O que o assistente demonstra |
 | --- | --- |
 | Extrato | Lista de entradas e saídas fictícias e acesso à área do extrato. |
-| Saldo | Explicação do saldo demonstrativo de R$ 1.250,00. |
-| Pagar | Orientação sobre a área de pagamentos e conferência dos dados. |
-| Pix | Orientação para localizar Pix e conhecer os cuidados antes de confirmar. |
-| Transferências | Explicação do caminho e da conferência das informações de destino. |
+| Saldo | Consulta do saldo fictício atualizado após as simulações. O valor inicial é R$ 1.250,00. |
+| Pagar | Escolha de conta fictícia, revisão, confirmação e comprovante simulado. |
+| Pix | Seleção de destinatário fictício e valor, com revisão e débito apenas na conta de demonstração. |
+| Transferências | Seleção de conta fictícia e valor, revisão e comprovante local. |
 | Cartões | Limite e fatura fictícios, com explicação da diferença para saldo. |
-| Ajuda básica | Segurança, acessibilidade, finalidade do assistente e encaminhamento humano simulado. |
+| Ajuda básica | Segurança, acessibilidade, finalidade do assistente e abertura de chamado simulada. |
 
 Exemplos de mensagens: “ver meu extrato”, “como pagar um boleto?”, “fazer Pix”, “como fazer uma transferência?” e “qual o limite do cartão?”.
 
 As sugestões também funcionam sem digitar. Quando encontra mais de um assunto ou não reconhece uma pergunta, o chatbot oferece opções para continuar.
+
+O botão de chamado no cabeçalho do chat e as sugestões **Abrir chamado** levam à confirmação de abertura. Ao confirmar, o assistente apresenta o protocolo fictício **DEMO 001**. Esse fluxo não abre conversa com atendente nem registra um chamado real.
+
+## Simular operações
+
+1. No painel, escolha **Pagar**, **Pix** ou **Transferências**.
+2. Escolha uma conta ou um destinatário fictício. Para Pix e transferências, informe o valor; o pagamento usa o valor fixo da conta selecionada.
+3. Clique em **Continuar para revisão**. Até aqui, nada é descontado.
+4. Confira os dados. Você pode editar ou cancelar.
+5. Confirme a operação simulada para receber um comprovante fictício e atualizar o saldo e o extrato.
+
+O sistema rejeita valores inválidos, saldo insuficiente e o pagamento repetido da mesma conta na sessão. Repetir uma confirmação não gera outro débito.
+
+Use **Reiniciar simulação**, no rodapé, e confirme para restaurar os dados iniciais. Recarregar a página também reinicia o saldo, as operações e a conversa. **Nova conversa**, no chat, limpa somente o histórico da conversa.
 
 ## Abrir o projeto
 
@@ -59,7 +73,7 @@ Os testes de lógica não substituem a inspeção visual, o uso de leitor de tel
 
 ## Dados e limites
 
-Todos os valores e movimentações são fictícios. O protótipo não realiza pagamentos, Pix, transferências, bloqueios de cartão ou atendimento real.
+Todos os valores e movimentações são fictícios. Pagamentos, Pix e transferências alteram apenas a conta de demonstração em memória. Não há transações bancárias reais, bloqueio de cartão ou atendimento real.
 
 O chat orienta e abre as áreas demonstrativas do painel. Não solicita dados bancários nem consulta contas reais. Mensagens com padrões evidentes de dados pessoais, como CPF, endereço de e-mail ou senha declarada, recebem orientação sem serem adicionadas ao histórico. Essa checagem é limitada; não informe informações pessoais mesmo assim.
 
@@ -77,12 +91,14 @@ assets/
   js/
     app.js                     Interface, conversa e preferências
     chat-engine.js             Reconhecimento de assuntos e respostas
+    transactions.js            Conta simulada, validações e comprovantes
     data/
       statement-data.js        Movimentações fictícias
 tests/
   chat-engine.test.cjs          Regras e respostas do chatbot
   chat-interface.test.cjs       Fluxos com DOM mínimo e referências do HTML
   statement-data.test.cjs       Coerência dos valores do extrato
+  transactions.test.cjs         Débitos, confirmações, cancelamento e reinício
 docs/
   GUIA-VALIDACAO.md             Verificação da versão experimental
   images/                      Capturas preservadas da versão anterior

@@ -21,7 +21,7 @@
     <symbol id="i-nexo" viewBox="0 0 32 32"><path d="M9 24V8l14 16V8" stroke-width="2.6"/><circle cx="9" cy="8" r="3" fill="currentColor" stroke="none"/><circle cx="23" cy="24" r="3" fill="currentColor" stroke="none"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8 M5 9v12h5v-7h4v7h5V9"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 3 19 9-19 9 4-9-4-9Z M7 12h15"/></symbol>
-    <symbol id="i-support" viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><path d="M2 21v-3a6 6 0 0 1 12 0v3 M15 3h7v9l-3-2h-4 M17 6h2"/></symbol>
+    <symbol id="i-support" viewBox="0 0 24 24"><path d="M3 5h18v5a2 2 0 0 0 0 4v5H3v-5a2 2 0 0 0 0-4V5Z M15 5v3 M15 11v2 M15 16v3 M7 9h4 M7 13h4"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14 M19 5 5 19"/></symbol>
   </defs></svg>
 
@@ -39,7 +39,7 @@
       </div>
     </header>
     <main id="conteudo" class="bank-container">
-      <p class="demo-notice"><strong>Demonstração acadêmica.</strong> Dados fictícios, sem operações reais. Não informe senhas ou dados pessoais.</p>
+      <p class="demo-notice"><strong>Demonstração acadêmica.</strong> As operações alteram apenas o saldo fictício desta aba. Não informe dados reais. Recarregar a página reinicia a simulação.</p>
       <section class="balance-hero" aria-labelledby="bank-greeting">
         <div class="hero-greeting"><div class="customer"><span class="avatar" aria-hidden="true">JD</span><div><p>Seu banco, do seu jeito.</p><h1 id="bank-greeting">Olá, Joana</h1></div></div><span class="account-badge">CONTA DEMONSTRATIVA</span></div>
         <div class="hero-balance-row"><div><div class="balance-label">Saldo disponível <button id="balance-visibility" class="eye-button" type="button" aria-label="Ocultar saldo" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></button></div><strong id="dashboard-balance" class="balance-value">R$ 1.250,00</strong><p class="balance-caption">Valor fictício para demonstração</p></div>
@@ -73,7 +73,7 @@
           <section class="security-note"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><div><h3>Sua senha é só sua</h3><p>O assistente nunca pede senha, código de acesso ou dados do cartão.</p></div></section>
         </aside>
       </div>
-      <footer class="bank-footer"><span>Banco Nexo · IncluiTech · Equipe 4</span><span>Protótipo experimental • dados fictícios</span></footer>
+      <footer class="bank-footer"><span>Banco Nexo · IncluiTech · Equipe 4</span><button type="button" class="text-link" data-reset-simulation>Reiniciar simulação</button><span>Protótipo experimental • dados fictícios</span></footer>
     </main>
     <nav class="mobile-nav" aria-label="Navegação principal">
       <a href="#conteudo"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Início</a>
@@ -91,7 +91,7 @@
       <header class="chat-header">
         <div class="chat-title-group"><span class="chat-brand-icon" aria-hidden="true"><svg class="icon"><use href="#i-nexo"/></svg></span><div><h2 id="chat-title" tabindex="-1">Meu Assistente Nexo</h2><p>Uma conexão para ajudar.</p></div></div>
         <div class="chat-header-actions">
-          <button class="chat-icon-button" type="button" data-topic="support" aria-label="Pedir apoio humano simulado" title="Apoio humano"><svg class="icon" aria-hidden="true"><use href="#i-support"/></svg></button>
+          <button class="chat-icon-button" type="button" data-topic="support" aria-label="Abrir chamado de demonstração" title="Abrir chamado"><svg class="icon" aria-hidden="true"><use href="#i-support"/></svg></button>
           <details class="chat-settings" id="chat-settings">
             <summary aria-label="Opções do assistente" title="Opções do assistente">⋮</summary>
             <div class="settings-menu"><strong>Preferências</strong><div class="font-controls" role="group" aria-label="Tamanho do texto"><button type="button" data-font="-10" aria-label="Diminuir texto">A−</button><span data-chat-font>100%</span><button type="button" data-font="10" aria-label="Aumentar texto">A+</button></div><button class="contrast-control" type="button" data-contrast aria-pressed="false">◐ Alto contraste <span data-contrast-status>Desativado</span></button><button type="button" id="chat-reset">Nova conversa</button></div>
@@ -125,6 +125,7 @@
     </section>
   </div>
   <script src="assets/js/data/statement-data.js"></script>
+  <script src="assets/js/transactions.js"></script>
   <script src="assets/js/chat-engine.js"></script>
   <script src="assets/js/app.js"></script>
 </body>

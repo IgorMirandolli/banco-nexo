@@ -4,8 +4,8 @@
   var topics = {
     statement: "Ver meu extrato", balance: "Consultar saldo", payment: "Como pagar uma conta?",
     pix: "Como fazer um Pix?", transfer: "Como fazer uma transferência?", cards: "Cartões e limite",
-    safety: "Dicas de segurança", support: "Preciso de uma pessoa", about: "Sobre o assistente",
-    accessibility: "Fonte e contraste", "support-confirmed": "Solicitar apoio simulado"
+    safety: "Dicas de segurança", support: "Abrir chamado", about: "Sobre o assistente",
+    accessibility: "Fonte e contraste", "support-confirmed": "Confirmar abertura do chamado"
   };
   function has(object, key) { return Object.prototype.hasOwnProperty.call(object, key); }
   function action(topic) { return { label: topics[topic], topic: topic }; }
@@ -17,7 +17,7 @@
     if (privateInput(message)) return "private";
     var text = String(message || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     if (!text) return "empty";
-    if (/\b(atendente|humano|pessoa|suporte|atendimento)\b/.test(text)) return "support";
+    if (/\b(atendente|humano|pessoa|suporte|atendimento|chamado|chamados|protocolo)\b/.test(text)) return "support";
     if (/\b(golpe|fraude|senha|roubo|roubado|perdi|perdido|seguranca)\b/.test(text)) return "safety";
     if (/\b(fonte|letra|contraste|acessibilidade|aumentar|diminuir)\b/.test(text)) return "accessibility";
     if (/\b(assistente|robo|chatbot|voce faz)\b/.test(text)) return "about";
@@ -37,26 +37,28 @@
     if (/\b(como|onde|explica|entendi)\b/.test(text) && has(topics, context)) return context;
     return "unknown";
   }
-  function response(topic) {
+  function response(topic, account) {
+    var balance = account && Number.isSafeInteger(account.closingCents) ? account.closingCents : 125000;
+    var formattedBalance = (balance / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     switch (topic) {
       case "statement":
         return { title: "Vamos olhar seu extrato", paragraphs: ["O extrato é a lista do que entrou e saiu da conta. Aqui, todas as movimentações são fictícias."], statement: true, actions: [{ label: "Abrir extrato no banco", view: "statement" }, action("balance"), action("support")] };
       case "balance":
-        return { title: "Seu saldo de demonstração é R$ 1.250,00", paragraphs: ["Saldo é o valor disponível neste exemplo. Extrato é a lista de entradas e saídas que explica esse valor. Nenhuma conta real foi consultada."], actions: [action("statement"), { label: "Ver saldo no banco", view: "balance" }] };
+        return { title: "Seu saldo de demonstração é " + formattedBalance, paragraphs: ["Este é o saldo fictício disponível após as simulações desta sessão. O extrato mostra as entradas e saídas. Nenhuma conta real foi consultada."], actions: [action("statement"), { label: "Ver saldo no banco", view: "balance" }] };
       case "pix":
-        return { title: "Posso te orientar sobre Pix", steps: ["Na tela do banco, escolha o atalho Pix.", "Confira quem receberia o dinheiro e o valor antes de qualquer confirmação em um serviço real.", "Nesta demonstração, a área Pix apresenta apenas um exemplo. Nenhum dinheiro é enviado."], paragraphs: ["Não envie uma chave Pix ou dados pessoais nesta conversa."], actions: [{ label: "Mostrar área Pix", view: "pix" }, action("safety"), action("support")] };
+        return { title: "Vamos simular um Pix?", steps: ["Abra a área Pix e escolha um destinatário fictício da lista.", "Informe o valor e continue para revisar.", "Confirme o Pix simulado para atualizar o saldo e receber um comprovante de exemplo."], paragraphs: ["Use somente os exemplos disponíveis. Nenhum dinheiro real é enviado."], actions: [{ label: "Simular Pix", view: "pix" }, action("safety"), action("support")] };
       case "payment":
-        return { title: "Sobre pagar uma conta", steps: ["No painel, escolha Pagar para conhecer a área de pagamentos.", "Em uma operação real, confira o destinatário, valor e vencimento do documento.", "O protótipo mostra apenas informações de exemplo; não lê código de barras nem realiza pagamentos."], actions: [{ label: "Mostrar pagamentos", view: "payment" }, action("support")] };
+        return { title: "Vamos simular um pagamento?", steps: ["Abra Pagar e escolha uma das contas fictícias.", "Confira o valor fixo e continue para revisar.", "Confirme para receber o comprovante e ver a saída no extrato desta sessão."], paragraphs: ["Não insira boletos reais. As contas são exemplos e nenhum pagamento real é realizado."], actions: [{ label: "Simular pagamento", view: "payment" }, action("support")] };
       case "transfer":
-        return { title: "Vamos falar de transferências", steps: ["Na tela principal, escolha Transferências.", "Antes de uma operação real, confira os dados de destino e o valor no ambiente do banco.", "Aqui, você pode conhecer um exemplo da área, sem preencher dados nem movimentar dinheiro."], actions: [{ label: "Mostrar transferências", view: "transfer" }, action("pix"), action("support")] };
+        return { title: "Vamos simular uma transferência?", steps: ["Abra Transferências e escolha uma conta fictícia.", "Informe o valor e confira os dados de exemplo na revisão.", "Confirme a transferência simulada. O saldo e o extrato desta aba serão atualizados."], paragraphs: ["A simulação não se conecta a bancos e não envia dinheiro real."], actions: [{ label: "Simular transferência", view: "transfer" }, action("pix"), action("support")] };
       case "cards":
         return { title: "Seu cartão de exemplo", paragraphs: ["Limite total fictício: R$ 3.000,00. Fatura de exemplo: R$ 430,00. Limite disponível no exemplo: R$ 2.570,00.", "Limite é quanto pode ser utilizado no cartão neste exemplo. Fatura é a relação de gastos a pagar. Esses valores não são o saldo da conta."], actions: [{ label: "Abrir cartões", view: "cards" }, action("safety"), action("support")] };
       case "safety":
         return { title: "Vamos cuidar da sua segurança", paragraphs: ["Não compartilhe senha, código de acesso, chave Pix ou dados completos do cartão nesta conversa.", "Se não reconhecer uma cobrança, suspeitar de golpe ou perder o cartão, procure um canal oficial do seu banco. Este protótipo não bloqueia cartões nem abre contestações reais."], actions: [action("support"), action("about")] };
       case "support":
-        return { title: "Você pode escolher pedir apoio", paragraphs: ["Posso continuar explicando os assuntos do banco ou demonstrar um encaminhamento para uma pessoa. Não existe atendente real conectado a este protótipo."], actions: [action("support-confirmed"), action("statement"), action("pix")] };
+        return { title: "Abrir um chamado", paragraphs: ["Confirme abaixo para gerar um protocolo de chamado demonstrativo.", "Esta opção não inicia conversa com um atendente. A abertura é simulada e nenhum dado será enviado."], actions: [action("support-confirmed")] };
       case "support-confirmed":
-        return { title: "Encaminhamento simulado", paragraphs: ["Protocolo DEMO 001.", "Nenhum chamado real foi aberto e nenhum dado foi enviado. Em um banco em operação, esta etapa conectaria você ao canal de atendimento."], actions: [action("about")] };
+        return { title: "Abertura de chamado simulada", paragraphs: ["Protocolo fictício: DEMO 001.", "Nenhum chamado real foi aberto e nenhum dado foi enviado. Esta é apenas uma demonstração da confirmação de abertura."], actions: [] };
       case "accessibility":
         return { title: "Deixe a leitura mais confortável", paragraphs: ["No topo do banco, use A− e A+ para ajustar o texto até 200%, ou ative Alto contraste.", "Com o chat aberto, as mesmas opções estão no menu de três pontos ao lado do botão Fechar. Você pode navegar com Tab e fechar com Esc."], actions: [action("about")] };
       case "about":

@@ -8,6 +8,7 @@ test("reconhece os serviços, acentos e frases completas", () => {
     "Como pagar um boleto?": "payment", "Fazer Pix": "pix", "pagar com pix": "pix",
     "preciso fazer uma transferência": "transfer", "qual o limite do cartão?": "cards",
     "ver saldo": "balance", "perdi meu cartão": "safety", "preciso de um atendente": "support",
+    "abrir chamado": "support", "preciso abrir um chamado": "support",
     "quero aumentar a letra": "accessibility"
   };
   for (const [input, expected] of Object.entries(cases)) assert.equal(engine.classify(input), expected, input);
@@ -39,6 +40,8 @@ test("todas as respostas e ações possuem destinos conhecidos", () => {
     }
   }
   assert.match(engine.response("support-confirmed").paragraphs.join(" "), /Nenhum chamado real/);
+  assert.deepEqual(engine.response("support").actions, [{ label: "Confirmar abertura do chamado", topic: "support-confirmed" }]);
+  assert.deepEqual(engine.response("support-confirmed").actions, []);
   assert.equal(engine.classify("como vejo", "__proto__"), "unknown");
   assert.ok(engine.response("anything").actions.length > 0);
 });

@@ -26,10 +26,10 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .font-controls { display: flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--border); border-radius: 6px; padding: 3px; background: var(--surface); }
 .font-controls button { min-width: 44px; padding: 5px; background: transparent; color: var(--brand); }
 .font-controls button:hover { background: var(--soft); }
-.font-controls span { min-width: 3rem; font-size: .75rem; text-align: center; color: var(--muted); font-weight: 650; }
-.contrast-control { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--border); font-size: .8rem; }
+.font-controls span { min-width: 3rem; font-size: .85rem; text-align: center; color: var(--muted); font-weight: 650; }
+.contrast-control { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--border); font-size: .9rem; }
 .contrast-control:hover { border-color: var(--brand); }
-.contrast-state { font-size: .75rem; padding: 2px 5px; border-radius: 3px; background: var(--soft); color: var(--brand); }
+.contrast-state { font-size: .85rem; padding: 2px 5px; border-radius: 3px; background: var(--soft); color: var(--brand); }
 .contrast-control[aria-pressed="true"] { border-color: var(--highlight); }
 body.high-contrast {
   --page: #000; --surface: #000; --ink: #fff; --muted: #eee; --border: #fff;

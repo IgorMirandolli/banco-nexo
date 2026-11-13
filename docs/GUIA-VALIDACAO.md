@@ -14,13 +14,25 @@ Esta branch substitui o assistente guiado e a área de avaliação da equipe por
 
 ## Respostas e limites
 
-- O extrato deve ter quatro movimentações inventadas e saldo final de R$ 1.250,00.
-- As explicações sobre pagamentos, Pix e transferências não devem afirmar que uma operação foi realizada.
+- Inicialmente o extrato deve ter quatro movimentações inventadas e saldo final de R$ 1.250,00. Após simulações, deve refletir os débitos da sessão.
+- Pagamentos, Pix e transferências devem indicar claramente que são simulações, sem transações reais.
 - A fatura e o limite do cartão são apenas exemplos.
 - Um assunto desconhecido deve oferecer sugestões.
 - Perguntas com assuntos distintos devem pedir uma escolha.
 - Padrões evidentes de dados pessoais não devem aparecer no histórico.
-- O encaminhamento humano deve ser claramente simulado, usando DEMO 001.
+- O botão de chamado deve oferecer apenas a confirmação de abertura, sem opções de conversa com atendente. Ao confirmar, deve apresentar o protocolo fictício DEMO 001 e informar que nenhum chamado real foi aberto.
+
+## Operações simuladas
+
+- Escolher um destinatário fictício, informar R$ 25,50 no Pix e revisar: o saldo deve continuar em R$ 1.250,00.
+- Confirmar: o saldo deve passar para R$ 1.224,50; o comprovante e o extrato devem mostrar o Pix fictício.
+- Repetir com uma conta de exemplo e com uma transferência. Conferir saldo e extrato também pelo chat.
+- Cancelar ou editar durante a revisão: não deve haver débito.
+- Tentar valor zero, negativo, malformado ou acima do saldo: deve haver uma mensagem de erro sem alteração.
+- Tentar pagar novamente a mesma conta na sessão: deve ser impedido.
+- Confirmar uma operação repetidamente: não deve haver débitos duplicados.
+- Manter o saldo oculto e concluir uma simulação: ele deve continuar oculto; ao revelar, deve mostrar o novo valor.
+- Confirmar o reinício da simulação: saldo inicial, quatro movimentações e conversa vazia devem ser restaurados.
 
 ## Acessibilidade e apresentação
 

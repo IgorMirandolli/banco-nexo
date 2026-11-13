@@ -4,6 +4,6 @@
   "private": true,
   "description": "Versão experimental do Banco Nexo com chatbot local e recursos de acessibilidade.",
   "scripts": {
-    "test": "node --test --test-isolation=none tests/chat-engine.test.cjs tests/chat-interface.test.cjs tests/statement-data.test.cjs"
+    "test": "node --test --test-isolation=none tests/chat-engine.test.cjs tests/chat-interface.test.cjs tests/statement-data.test.cjs tests/transactions.test.cjs"
   }
 }

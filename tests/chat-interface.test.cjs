@@ -48,7 +48,7 @@ function setup() {
   node("font-plus").dataset.font = "10";
   node("chat-overlay").hidden = true;
   const writes = [];
-  const context = { window: { NexoChat: require("../assets/js/chat-engine.js"), NexoStatement: require("../assets/js/data/statement-data.js") }, document: doc, localStorage: { getItem: () => null, setItem: (...args) => writes.push(args) } };
+  const context = { window: { NexoChat: require("../assets/js/chat-engine.js"), NexoStatement: require("../assets/js/data/statement-data.js"), NexoTransactions: require("../assets/js/transactions.js") }, document: doc, localStorage: { getItem: () => null, setItem: (...args) => writes.push(args) } };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../assets/js/app.js"), "utf8"), context);
   function click(data) {
     const button = new Element("button");
@@ -81,7 +81,7 @@ test("abertura, conversa, serviço no banco, retorno de foco e nova conversa", (
   assert.ok(node("chat-log").childElementCount > 0);
   click({ view: "pix" });
   assert.equal(node("chat-overlay").hidden, true);
-  assert.equal(node("service-title").textContent, "Pix");
+  assert.match(node("service-title").textContent, /^Pix/);
   click({ openChat: "" });
   node("chat-reset").listeners.click();
   assert.equal(node("chat-log").childElementCount, 0);
@@ -109,4 +109,57 @@ test("todos os arquivos locais carregados pelo HTML existem", () => {
   for (const match of html.matchAll(/(?:src|href)="(assets\/[^"#]+)"/g)) {
     assert.ok(fs.existsSync(path.join(__dirname, "..", match[1])), match[1]);
   }
+});
+
+function find(root, predicate) {
+  if (predicate(root)) return root;
+  for (const child of root.children) { const match = find(child, predicate); if (match) return match; }
+}
+test("Pix, pagamento e transferência atualizam a sessão e o chat; reinício restaura o extrato", () => {
+  const { node, click, submit } = setup();
+  const content = node("service-content");
+  for (const [view, amount, expected] of [["pix", "25,50", "1.224,50"], ["payment", "", "1.144,50"], ["transfer", "100,00", "1.044,50"]]) {
+    click({ view });
+    const form = find(content, item => item.tag === "form");
+    if (amount) find(form, item => item.tag === "input").value = amount;
+    form.listeners.submit({ preventDefault() {} });
+    assert.match(content.textContent, /Confira antes de confirmar/);
+    const confirm = find(content, item => item.tag === "button" && item.textContent.startsWith("Confirmar "));
+    confirm.listeners.click();
+    assert.match(content.textContent, /Comprovante de demonstração/);
+    assert.ok(node("dashboard-balance").textContent.includes(expected));
+    confirm.listeners.click();
+    assert.ok(node("dashboard-balance").textContent.includes(expected), "confirmar duas vezes não debita duas vezes");
+  }
+  click({ view: "statement" });
+  assert.match(content.textContent, /Pix para Ana/);
+  assert.match(content.textContent, /Pagamento: Energia/);
+  assert.match(content.textContent, /Transferência para Ana/);
+  click({ openChat: "" });
+  submit("saldo");
+  assert.match(node("chat-log").textContent, /1\.044,50/);
+  node("chat-close").listeners.click();
+  click({ resetSimulation: "" });
+  find(content, item => item.tag === "button" && item.textContent === "Confirmar reinício").listeners.click();
+  assert.match(node("dashboard-balance").textContent, /1\.250,00/);
+  assert.doesNotMatch(content.textContent, /Pix para Ana/);
+  assert.equal(node("chat-log").childElementCount, 0);
+});
+test("cancelar e corrigir valores não descontam do saldo", () => {
+  const { node, click } = setup();
+  const content = node("service-content");
+  click({ view: "pix" });
+  let form = find(content, item => item.tag === "form");
+  const input = find(form, item => item.tag === "input");
+  input.value = "9999,00";
+  form.listeners.submit({ preventDefault() {} });
+  assert.match(content.textContent, /Saldo fictício insuficiente/);
+  input.value = "50,00";
+  form.listeners.submit({ preventDefault() {} });
+  find(content, item => item.tag === "button" && item.textContent === "Editar dados").listeners.click();
+  form = find(content, item => item.tag === "form");
+  assert.equal(find(form, item => item.tag === "input").value, "50,00");
+  form.listeners.submit({ preventDefault() {} });
+  find(content, item => item.tag === "button" && item.textContent === "Cancelar").listeners.click();
+  assert.match(node("dashboard-balance").textContent, /1\.250,00/);
 });

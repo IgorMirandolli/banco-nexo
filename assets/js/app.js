@@ -3,6 +3,8 @@
   "use strict";
   var engine = window.NexoChat;
   var statement = window.NexoStatement;
+  var transactions = window.NexoTransactions;
+  var account = transactions.createAccount(statement);
   var bank = document.getElementById("bank-app");
   var overlay = document.getElementById("chat-overlay");
   var sheet = overlay.querySelector(".chat-sheet");
@@ -56,7 +58,7 @@
   function statementList(className) {
     var list = element("ul", className || "statement-entries");
     list.setAttribute("aria-label", "Movimentações fictícias");
-    statement.entries.forEach(function (entry) {
+    account.snapshot().entries.forEach(function (entry) {
       var row = element("li", "statement-entry");
       var detail = element("div");
       detail.append(element("time", "", entry.date), element("span", "entry-name", entry.label));
@@ -65,6 +67,166 @@
       list.append(row);
     });
     return list;
+  }
+
+  var operationLabels = { pix: "Pix", payment: "Pagamento", transfer: "Transferência" };
+  function actionButton(label, callback, secondary) {
+    var button = element("button", secondary ? "tx-secondary" : "tx-primary", label);
+    button.type = "button";
+    button.addEventListener("click", callback);
+    return button;
+  }
+  function viewButton(label, view) {
+    var button = element("button", "tx-secondary", label);
+    button.type = "button";
+    button.dataset.view = view;
+    return button;
+  }
+  function detailRows(pairs) {
+    var list = element("dl", "tx-details");
+    pairs.forEach(function (pair) {
+      var row = element("div");
+      row.append(element("dt", "", pair[0]), element("dd", "", pair[1]));
+      list.append(row);
+    });
+    return list;
+  }
+  function updateBalance() {
+    var hidden = document.getElementById("balance-visibility").getAttribute("aria-pressed") === "true";
+    document.getElementById("dashboard-balance").textContent = hidden ? "R$ ••••••" : money(account.snapshot().closingCents);
+  }
+  function focusPanel() {
+    document.getElementById("service-title").focus({ preventScroll: true });
+    document.getElementById("service-panel").scrollIntoView({ behavior: "instant", block: "nearest" });
+  }
+  function operationForm(type, initial) {
+    initial = initial || {};
+    var content = document.getElementById("service-content");
+    content.replaceChildren();
+    document.getElementById("service-title").textContent = operationLabels[type] + " • simulação";
+    content.append(element("p", "tx-stage", "ETAPA 1 DE 3 · PREENCHER"));
+    content.append(element("p", "panel-demo", "Use somente os destinatários e contas fictícios da lista. Nenhum valor real será enviado."));
+    content.append(element("p", "tx-available", "Saldo fictício disponível: " + money(account.snapshot().closingCents)));
+    var form = element("form", "tx-form");
+    form.noValidate = true;
+    var select = element("select");
+    select.id = "tx-destination";
+    var items = type === "payment" ? transactions.bills : transactions.recipients;
+    items.forEach(function (item) {
+      var option = element("option", "", type === "payment" ? item.name + " — " + money(item.amountCents) : item.name);
+      option.value = item.id;
+      select.append(option);
+    });
+    select.value = (type === "payment" ? initial.billId : initial.recipientId) || items[0].id;
+    var destination = element("label", "tx-field", type === "payment" ? "Conta de exemplo" : "Destinatário fictício");
+    destination.htmlFor = select.id;
+    destination.append(select);
+    var info = element("p", "tx-destination-info");
+    var amount = element("input");
+    amount.id = "tx-amount";
+    amount.type = "text";
+    amount.inputMode = "decimal";
+    amount.maxLength = 18;
+    amount.autocomplete = "off";
+    amount.value = initial.amount || "50,00";
+    amount.required = true;
+    var amountLabel = element("label", "tx-field", "Valor (R$)");
+    amountLabel.htmlFor = amount.id;
+    amountLabel.append(amount);
+    var formatHint = element("span", "tx-hint", type === "payment" ? "Valor fixo da conta escolhida." : "Exemplo: 25,50. Você revisará antes de confirmar.");
+    amountLabel.append(formatHint);
+    function updateDestination() {
+      var item = items.find(function (entry) { return entry.id === select.value; });
+      if (!item) return;
+      if (type === "payment") {
+        amount.value = (item.amountCents / 100).toFixed(2).replace(".", ",");
+        amount.readOnly = true;
+        info.textContent = "Código fictício: " + item.code + (account.snapshot().paidBillIds.indexOf(item.id) !== -1 ? " • já paga nesta sessão" : "");
+      } else info.textContent = type === "pix" ? "Chave Pix de exemplo: " + item.pixKey : item.bank + " • " + item.account + " (dados inventados)";
+    }
+    select.addEventListener("change", updateDestination);
+    updateDestination();
+    var error = element("p", "tx-error");
+    error.setAttribute("role", "alert");
+    error.setAttribute("tabindex", "-1");
+    var actions = element("div", "tx-actions");
+    var submit = element("button", "tx-primary", "Continuar para revisão");
+    submit.type = "submit";
+    actions.append(submit, viewButton("Cancelar", "balance"));
+    form.append(destination, info, amountLabel, error, actions);
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var values = { recipientId: select.value, billId: select.value, amount: amount.value };
+      var result = account.prepare(type, values);
+      if (!result.ok) { error.textContent = result.error; error.focus(); return; }
+      operationReview(result.draft, values);
+    });
+    content.append(form);
+  }
+  function operationReview(draft, values) {
+    var content = document.getElementById("service-content");
+    content.replaceChildren();
+    document.getElementById("service-title").textContent = "Revise o " + operationLabels[draft.type].toLowerCase();
+    content.append(element("p", "tx-stage", "ETAPA 2 DE 3 · REVISAR"));
+    content.append(element("h3", "panel-subtitle", "Confira antes de confirmar"));
+    var pairs = [
+      [draft.bill ? "Conta" : "Destinatário", draft.bill ? draft.bill.name : draft.recipient.name],
+      ["Valor simulado", money(draft.amountCents)], ["Tarifa", "R$ 0,00"],
+      ["Saldo fictício após confirmar", money(account.snapshot().closingCents - draft.amountCents)]
+    ];
+    if (draft.recipient) pairs.splice(1, 0, [draft.type === "pix" ? "Chave fictícia" : "Conta fictícia", draft.type === "pix" ? draft.recipient.pixKey : draft.recipient.bank + " • " + draft.recipient.account]);
+    content.append(detailRows(pairs));
+    content.append(element("p", "panel-demo", "Ao confirmar, apenas o saldo e o extrato desta aba serão alterados. Nenhuma transação real será executada."));
+    var error = element("p", "tx-error");
+    error.setAttribute("role", "alert");
+    var actions = element("div", "tx-actions");
+    var confirm = actionButton("Confirmar " + operationLabels[draft.type].toLowerCase() + " simulado", function () {
+      confirm.disabled = true;
+      var result = account.confirm(draft.id);
+      if (!result.ok) { error.textContent = result.error; confirm.disabled = false; return; }
+      updateBalance();
+      operationReceipt(result.receipt);
+      announce(operationLabels[draft.type] + " simulado concluído. Novo saldo fictício: " + money(result.receipt.balanceAfterCents));
+    });
+    actions.append(confirm, actionButton("Editar dados", function () { account.cancel(draft.id); operationForm(draft.type, values); focusPanel(); }, true),
+      actionButton("Cancelar", function () { account.cancel(draft.id); showBankView(draft.type, true); announce("Simulação cancelada. Nenhum valor foi descontado."); }, true));
+    content.append(error, actions);
+    focusPanel();
+  }
+  function operationReceipt(receipt) {
+    var content = document.getElementById("service-content");
+    content.replaceChildren();
+    document.getElementById("service-title").textContent = operationLabels[receipt.type] + " simulado concluído";
+    content.append(element("p", "tx-stage", "ETAPA 3 DE 3 · COMPROVANTE"));
+    content.append(element("div", "tx-success", "✓ Simulação concluída"));
+    content.append(detailRows([
+      ["Valor", money(receipt.amountCents)], ["Destino fictício", receipt.recipient],
+      ["Data da simulação", receipt.date], ["Identificador", receipt.id],
+      ["Saldo fictício atualizado", money(receipt.balanceAfterCents)]
+    ]));
+    content.append(element("p", "panel-demo", "Comprovante de demonstração, sem validade bancária. Nada foi enviado a um banco ou destinatário real."));
+    var actions = element("div", "tx-actions");
+    actions.append(viewButton("Ver no extrato", "statement"), viewButton("Nova simulação", receipt.type));
+    content.append(actions);
+    focusPanel();
+  }
+  function resetSimulation() {
+    var content = document.getElementById("service-content");
+    content.replaceChildren();
+    document.getElementById("service-title").textContent = "Reiniciar simulação?";
+    content.append(element("p", "panel-description", "Isso restaura o saldo fictício para R$ 1.250,00 e remove as operações e a conversa desta sessão."));
+    content.append(actionButton("Confirmar reinício", function () {
+      account.reset();
+      updateBalance();
+      log.replaceChildren();
+      welcome.hidden = false;
+      input.value = "";
+      send.disabled = true;
+      lastTopic = "";
+      showBankView("statement", true);
+      announce("Simulação reiniciada. Saldo fictício de R$ 1.250,00.");
+    }), viewButton("Cancelar", "statement"));
+    focusPanel();
   }
 
   var bankViews = {
@@ -78,15 +240,15 @@
     title.textContent = bankViews[view];
     content.replaceChildren();
     if (view === "statement") {
-      content.append(element("p", "panel-description", "1 a 4 de novembro de 2026 • período fictício"));
+      content.append(element("p", "panel-description", "Histórico fictício inicial e operações simuladas nesta sessão"));
       content.append(element("p", "opening-balance", "Saldo inicial: " + money(statement.openingCents)));
       content.append(statementList());
       var total = element("div", "panel-total");
-      total.append(element("span", "", "Saldo final fictício"), element("strong", "", money(statement.closingCents)));
+      total.append(element("span", "", "Saldo final fictício"), element("strong", "", money(account.snapshot().closingCents)));
       content.append(total);
     } else if (view === "balance") {
       content.append(element("p", "panel-description", "Valor disponível nesta demonstração"));
-      content.append(element("strong", "panel-value", money(statement.closingCents)));
+      content.append(element("strong", "panel-value", money(account.snapshot().closingCents)));
       content.append(element("p", "panel-description", "Nenhuma conta real foi consultada."));
     } else if (view === "cards") {
       var values = element("dl", "card-values");
@@ -96,11 +258,10 @@
         values.append(item);
       });
       content.append(values);
+    } else if (view === "pix" || view === "payment" || view === "transfer") {
+      operationForm(view);
     } else {
       var examples = {
-        pix: ["Conheça a área Pix", "Um lugar para enviar e receber. Neste protótipo, use o assistente para entender o caminho e os cuidados antes de uma confirmação."],
-        payment: ["Suas contas em um só lugar", "Exemplo fictício: conta de energia • R$ 80,00. Esta tela não recebe boletos nem executa pagamentos."],
-        transfer: ["Transferir com clareza", "Conheça o caminho para uma transferência. Os dados do destinatário e o valor devem ser conferidos no ambiente do banco em uma operação real."],
         safety: ["Informação também protege", "Nunca compartilhe senha, código de acesso ou dados completos do cartão. Em caso de dúvida, procure um canal oficial do seu banco."]
       };
       content.append(element("h3", "panel-subtitle", examples[view][0]));
@@ -152,7 +313,7 @@
       if (reply.statement) {
         article.append(element("p", "opening-balance", "Saldo inicial: " + money(statement.openingCents)));
         article.append(statementList());
-        article.append(element("p", "reply-total", "Saldo final fictício: " + money(statement.closingCents)));
+        article.append(element("p", "reply-total", "Saldo final fictício: " + money(account.snapshot().closingCents)));
       }
       if (reply.actions) {
         var actions = element("div", "reply-actions");
@@ -173,7 +334,7 @@
   function sendTopic(topic) {
     if (!Object.prototype.hasOwnProperty.call(engine.topics, topic)) return;
     addMessage("user", engine.topics[topic]);
-    addMessage("bot", "", engine.response(topic));
+    addMessage("bot", "", engine.response(topic, account.snapshot()));
     lastTopic = topic;
     settings.open = false;
   }
@@ -182,7 +343,7 @@
     if (!value) return;
     var topic = engine.classify(value, lastTopic);
     if (topic !== "private") addMessage("user", value);
-    addMessage("bot", "", engine.response(topic));
+    addMessage("bot", "", engine.response(topic, account.snapshot()));
     if (Object.prototype.hasOwnProperty.call(engine.topics, topic)) lastTopic = topic;
   }
 
@@ -190,6 +351,7 @@
     var target = event.target.closest("button, a");
     if (!target) return;
     if (target.hasAttribute("data-font")) { changeScale(Number(target.dataset.font)); return; }
+    if (target.hasAttribute("data-reset-simulation")) { resetSimulation(); return; }
     if (target.hasAttribute("data-contrast")) {
       applyContrast(!highContrast, true);
       preference("nexo-contrast", highContrast ? "on" : "off");
@@ -230,7 +392,7 @@
     var hidden = this.getAttribute("aria-pressed") !== "true";
     this.setAttribute("aria-pressed", String(hidden));
     this.setAttribute("aria-label", hidden ? "Mostrar saldo" : "Ocultar saldo");
-    document.getElementById("dashboard-balance").textContent = hidden ? "R$ ••••••" : money(statement.closingCents);
+    document.getElementById("dashboard-balance").textContent = hidden ? "R$ ••••••" : money(account.snapshot().closingCents);
   });
   document.addEventListener("keydown", function (event) {
     if (overlay.hidden) return;
@@ -255,5 +417,6 @@
 
   try { applyContrast(localStorage.getItem("nexo-contrast") === "on", false); }
   catch (error) { applyContrast(false, false); }
+  updateBalance();
   showBankView("statement", false);
 }());
