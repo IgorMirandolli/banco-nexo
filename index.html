@@ -1,239 +1,131 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Protótipo acadêmico do Banco Nexo com assistência guiada Nexo Livre."
-    />
-    <title>Banco Nexo — demonstração</title>
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <link rel="stylesheet" href="assets/css/bank.css" />
-  </head>
-  <body>
-    <a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Banco Nexo: protótipo com chatbot simples, ajuste de fonte e alto contraste." />
+  <title>Banco Nexo — Meu Assistente</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/bank.css" />
+  <link rel="stylesheet" href="assets/css/chat.css" />
+</head>
+<body>
+  <svg class="icon-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-pix" viewBox="0 0 24 24"><path d="m12 2 10 10-10 10L2 12 12 2Z M6 8h3l3 3 3-3h3 M6 16h3l3-3 3 3h3"/></symbol>
+    <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3 5v14 M7 5v14 M10 5v14 M14 5v14 M17 5v14 M21 5v14"/></symbol>
+    <symbol id="i-transfer" viewBox="0 0 24 24"><path d="M3 7h17m-4-4 4 4-4 4 M21 17H4m4-4-4 4 4 4"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z M8 7h8 M8 11h8 M8 15h5"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 9h20 M6 15h5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 3v7c0 5-8 10-8 10S4 17 4 12V5l8-3Z m-4 10 3 3 5-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M19 12v6a2 2 0 0 1-2 2H7l-5 3V6a2 2 0 0 1 2-2h9 M7 9h5 M7 14h8 M19 1l1.2 3.8L24 6l-3.8 1.2L19 11l-1.2-3.8L14 6l3.8-1.2L19 1Z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8 M5 9v12h5v-7h4v7h5V9"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 3 19 9-19 9 4-9-4-9Z M7 12h15"/></symbol>
+    <symbol id="i-support" viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><path d="M2 21v-3a6 6 0 0 1 12 0v3 M15 3h7v9l-3-2h-4 M17 6h2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14 M19 5 5 19"/></symbol>
+  </defs></svg>
 
-    <svg class="icon-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
-      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
-      <symbol id="i-pix" viewBox="0 0 24 24"><path d="m12 2 10 10-10 10L2 12 12 2Z M6 8h3l3 3 3-3h3 M6 16h3l3-3 3 3h3"/></symbol>
-      <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3 5v14 M7 5v14 M10 5v14 M14 5v14 M17 5v14 M21 5v14"/></symbol>
-      <symbol id="i-transfer" viewBox="0 0 24 24"><path d="M3 7h17m-4-4 4 4-4 4 M21 17H4m4-4-4 4 4 4"/></symbol>
-      <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z M8 7h8 M8 11h8 M8 15h5"/></symbol>
-      <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 9h20 M6 15h5"/></symbol>
-      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18 M7 16l4-5 4 2 6-8 M16 5h5v5"/></symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 3v7c0 5-8 10-8 10S4 17 4 12V5l8-3Z m-4 10 3 3 5-6"/></symbol>
-      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a9 9 0 0 1-9 9H3l2-5a9 9 0 1 1 16-4Z M8 10h8 M8 14h5"/></symbol>
-      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8 M5 9v12h5v-7h4v7h5V9"/></symbol>
-    </defs></svg>
-    <div id="application-content">
-      <header class="bank-topbar" aria-label="Cabeçalho do Banco Nexo">
-        <a class="brand" href="#conteudo" aria-label="Banco Nexo, ir para a visão geral">
-          <span class="brand-mark" aria-hidden="true">N</span>
-          <span class="brand-copy">
-            <span>Banco</span>
-            <strong>Nexo</strong>
-          </span>
-        </a>
+  <div id="bank-app">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="bank-header">
+      <a class="brand" href="#conteudo" aria-label="Banco Nexo — início"><span class="brand-mark" aria-hidden="true">N</span><span>Banco<strong>Nexo</strong></span></a>
+      <div class="accessibility-controls" aria-label="Acessibilidade">
+        <div class="font-controls" role="group" aria-label="Tamanho do texto">
+          <button type="button" data-font="-10" aria-label="Diminuir texto">A−</button>
+          <span id="font-label">100%</span>
+          <button type="button" data-font="10" aria-label="Aumentar texto">A+</button>
+        </div>
+        <button class="contrast-control" type="button" data-contrast aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste <span class="contrast-state" data-contrast-status>Desativado</span></button>
+      </div>
+    </header>
+    <main id="conteudo" class="bank-container">
+      <p class="demo-notice"><strong>Demonstração acadêmica.</strong> Dados fictícios, sem operações reais. Não informe senhas ou dados pessoais.</p>
+      <section class="balance-hero" aria-labelledby="bank-greeting">
+        <div class="hero-greeting"><div class="customer"><span class="avatar" aria-hidden="true">JD</span><div><p>Seu banco, do seu jeito.</p><h1 id="bank-greeting">Olá, Joana</h1></div></div><span class="account-badge">CONTA DEMONSTRATIVA</span></div>
+        <div class="hero-balance-row"><div><div class="balance-label">Saldo disponível <button id="balance-visibility" class="eye-button" type="button" aria-label="Ocultar saldo" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></button></div><strong id="dashboard-balance" class="balance-value">R$ 1.250,00</strong><p class="balance-caption">Valor fictício para demonstração</p></div>
+          <div class="hero-actions"><button type="button" data-view="statement">Ver extrato <span aria-hidden="true">→</span></button><button type="button" data-view="pix">Fazer Pix <span aria-hidden="true">→</span></button></div>
+        </div>
+        <div class="hero-account"><span>Agência 0001 · Conta 00432-0 (fictícia)</span><span>Banco Nexo <strong>feito para você.</strong></span></div>
+      </section>
+      <div class="dashboard-layout">
+        <div class="main-column">
+          <section class="surface services" aria-labelledby="services-title">
+            <div class="section-heading"><h2 id="services-title">Seu dia a dia</h2><span>O que você precisa?</span></div>
+            <div class="service-grid">
+              <button id="service-statement" type="button" data-view="statement"><svg class="icon" aria-hidden="true"><use href="#i-receipt"/></svg>Extrato</button>
+              <button id="service-payment" type="button" data-view="payment"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg>Pagar</button>
+              <button id="service-pix" type="button" data-view="pix"><svg class="icon" aria-hidden="true"><use href="#i-pix"/></svg>Pix</button>
+              <button id="service-transfer" type="button" data-view="transfer"><svg class="icon" aria-hidden="true"><use href="#i-transfer"/></svg>Transferências</button>
+              <button id="service-balance" type="button" data-view="balance"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg>Saldo</button>
+              <button id="service-cards" type="button" data-view="cards"><svg class="icon" aria-hidden="true"><use href="#i-card"/></svg>Cartões</button>
+              <button id="service-safety" type="button" data-view="safety"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Segurança</button>
+              <button type="button" data-open-chat><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Assistente</button>
+            </div>
+          </section>
+          <section id="service-panel" class="surface service-panel" aria-labelledby="service-title">
+            <div class="section-heading"><h2 id="service-title" tabindex="-1">Minha conta</h2><span>Dados de exemplo</span></div>
+            <div id="service-content"></div>
+          </section>
+        </div>
+        <aside class="side-column" aria-label="Informações da conta">
+          <section class="surface card-preview"><div class="section-heading"><h2>Meu cartão</h2><span>Demonstrativo</span></div><div class="mini-card" aria-hidden="true"><strong>nexo.</strong><span class="card-chip"></span><span>•••• 0432</span><small>DIGITAL</small></div><h3>Nexo para o seu dia a dia</h3><p>Consulte os valores fictícios e tire dúvidas sobre limite e fatura.</p><button class="text-link" type="button" data-view="cards">Ver cartões <span aria-hidden="true">→</span></button></section>
+          <section class="assistant-promo"><span class="promo-kicker">MEU ASSISTENTE NEXO</span><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><h2>Uma conversa<br>pode ajudar.</h2><p>Tire dúvidas sobre extrato, Pix, pagamentos, transferências e cartões.</p><button type="button" data-open-chat>Conversar agora <span aria-hidden="true">→</span></button><small>Respostas simples, por palavras-chave.</small></section>
+          <section class="security-note"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><div><h3>Sua senha é só sua</h3><p>O assistente nunca pede senha, código de acesso ou dados do cartão.</p></div></section>
+        </aside>
+      </div>
+      <footer class="bank-footer"><span>Banco Nexo · IncluiTech · Equipe 4</span><span>Protótipo experimental • dados fictícios</span></footer>
+    </main>
+    <nav class="mobile-nav" aria-label="Navegação principal">
+      <a href="#conteudo"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Início</a>
+      <button type="button" data-view="statement"><svg class="icon" aria-hidden="true"><use href="#i-receipt"/></svg>Extrato</button>
+      <button type="button" data-view="cards"><svg class="icon" aria-hidden="true"><use href="#i-card"/></svg>Cartões</button>
+      <button type="button" data-open-chat><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Assistente</button>
+    </nav>
+    <button class="chat-launcher" id="chat-launcher" type="button" data-open-chat aria-label="Abrir Meu Assistente Nexo" aria-haspopup="dialog"><span>Precisa de ajuda?</span><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></button>
+    <p id="page-status" class="sr-only" role="status"></p>
+  </div>
 
-        <div class="top-actions">
-          <div class="font-controls" role="group" aria-label="Tamanho do texto">
-            <button class="icon-button" id="decrease-text" type="button" aria-label="Diminuir tamanho do texto" title="Diminuir texto">
-              <span aria-hidden="true">A−</span>
-            </button>
-            <span class="font-label" id="font-label">Texto 100%</span>
-            <button class="icon-button" id="increase-text" type="button" aria-label="Aumentar tamanho do texto" title="Aumentar texto">
-              <span aria-hidden="true">A+</span>
-            </button>
-          </div>
-
-          <button class="contrast-button" id="contrast-toggle" type="button" aria-pressed="false">
-            <span class="contrast-symbol" aria-hidden="true"></span>
-            <span>Alto contraste</span><span class="contrast-state" data-contrast-status>Desativado</span>
-          </button>
-
-          <button class="top-help-button" type="button" data-open-assistant>
-            <span class="help-icon" aria-hidden="true">?</span>
-            Ajuda guiada
-          </button>
+  <div class="chat-overlay" id="chat-overlay" hidden>
+    <section class="chat-sheet" role="dialog" aria-modal="true" aria-labelledby="chat-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <header class="chat-header">
+        <div><h2 id="chat-title" tabindex="-1">Meu Assistente Nexo</h2><p>Respostas automáticas</p></div>
+        <div class="chat-header-actions">
+          <button class="chat-icon-button" type="button" data-topic="support" aria-label="Pedir apoio humano simulado" title="Apoio humano"><svg class="icon" aria-hidden="true"><use href="#i-support"/></svg></button>
+          <details class="chat-settings" id="chat-settings">
+            <summary aria-label="Opções do assistente" title="Opções do assistente">⋮</summary>
+            <div class="settings-menu"><strong>Preferências</strong><div class="font-controls" role="group" aria-label="Tamanho do texto"><button type="button" data-font="-10" aria-label="Diminuir texto">A−</button><span data-chat-font>100%</span><button type="button" data-font="10" aria-label="Aumentar texto">A+</button></div><button class="contrast-control" type="button" data-contrast aria-pressed="false">◐ Alto contraste <span data-contrast-status>Desativado</span></button><button type="button" id="chat-reset">Nova conversa</button></div>
+          </details>
+          <button id="chat-close" class="chat-icon-button" type="button" aria-label="Fechar assistente"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
         </div>
       </header>
-      <p class="sr-only" id="page-announcer" role="status" aria-atomic="true"></p>
-
-      <div class="demo-banner" role="note" aria-label="Aviso importante sobre a demonstração">
-        <span class="banner-symbol" aria-hidden="true">i</span>
-        <p><strong>Ambiente de demonstração:</strong> os valores e informações desta página são fictícios. Nunca informe senha, CPF ou dados de conta.</p>
+      <div class="chat-scroll" id="chat-scroll">
+        <div class="chat-welcome" id="chat-welcome">
+          <span class="welcome-symbol" aria-hidden="true"><svg class="icon"><use href="#i-chat"/></svg></span>
+          <h3>Olá, Joana!<br>Como posso te ajudar?</h3>
+          <div class="welcome-suggestions" aria-label="Sugestões para começar">
+            <button class="suggestion" type="button" data-topic="about">Sobre o assistente</button>
+            <button class="suggestion" type="button" data-topic="statement">Ver meu extrato</button>
+            <button class="suggestion" type="button" data-topic="pix">Como fazer um Pix?</button>
+          </div>
+          <p>Escolha um assunto ou escreva sua dúvida.</p>
+        </div>
+        <div id="chat-log" class="chat-log" role="log" aria-label="Histórico da conversa" aria-live="polite" aria-relevant="additions" aria-atomic="false"></div>
       </div>
-
-      <main id="conteudo" class="bank-shell">
-        <section id="visao-geral" class="dashboard" aria-labelledby="dashboard-title">
-          <section class="bank-hero">
-            <div class="hero-greeting">
-              <div class="hero-person"><span class="profile-avatar" aria-hidden="true">JD</span><div><span>Bom ter você por aqui.</span><h1 id="dashboard-title">Olá, Joana</h1></div></div>
-              <span class="demo-account">CONTA DEMONSTRATIVA</span>
-            </div>
-            <div class="hero-balance">
-              <div><p>Saldo disponível <button id="balance-visibility" class="balance-eye" type="button" aria-label="Ocultar saldo" aria-pressed="false"><svg class="ui-icon" aria-hidden="true"><use href="#i-eye"/></svg></button></p><strong id="dashboard-balance">R$ 1.250,00</strong><span class="balance-footnote">Saldo fictício • nenhuma conta real foi consultada</span></div>
-              <div class="hero-balance-actions"><button type="button" data-open-assistant data-assistant-state="explain">Entender meu saldo <span aria-hidden="true">→</span></button><button type="button" data-open-assistant data-assistant-state="balance">Consulta guiada <span aria-hidden="true">→</span></button></div>
-            </div>
-            <div class="hero-account-line"><span>Agência 0001 · Conta 00432-0 <small>(fictícia)</small></span><span>Banco Nexo <strong>feito para você.</strong></span></div>
-          </section>
-
-          <div class="bank-content-grid">
-            <div class="bank-main-column">
-              <section class="bank-services" aria-labelledby="services-title">
-                <div class="bank-section-title"><h2 id="services-title">Seu dia a dia</h2><span>Serviços da conta</span></div>
-                <div class="service-grid">
-                  <button type="button" data-demo-service="Pix"><svg class="ui-icon" aria-hidden="true"><use href="#i-pix"/></svg><span>Pix</span></button>
-                  <button type="button" data-demo-service="Pagamentos"><svg class="ui-icon" aria-hidden="true"><use href="#i-barcode"/></svg><span>Pagar</span></button>
-                  <button type="button" data-demo-service="Transferências"><svg class="ui-icon" aria-hidden="true"><use href="#i-transfer"/></svg><span>Transferir</span></button>
-                  <button type="button" data-open-assistant data-assistant-state="statement"><svg class="ui-icon" aria-hidden="true"><use href="#i-receipt"/></svg><span>Extrato de exemplo</span></button>
-                  <button type="button" data-demo-service="Cartões"><svg class="ui-icon" aria-hidden="true"><use href="#i-card"/></svg><span>Cartões</span></button>
-                  <button type="button" data-demo-service="Investimentos"><svg class="ui-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Investimentos</span></button>
-                  <button type="button" data-open-assistant data-assistant-state="safety"><svg class="ui-icon" aria-hidden="true"><use href="#i-shield"/></svg><span>Segurança</span></button>
-                  <button class="guided-service" type="button" data-open-assistant><svg class="ui-icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Ajuda guiada</span><small>Nexo Livre</small></button>
-                </div>
-              </section>
-
-              <section class="bank-product" aria-labelledby="card-section-title">
-                <div class="bank-section-title"><h2 id="card-section-title">Meus cartões</h2><span>Demonstrativo</span></div>
-                <div class="product-content"><div class="mini-bank-card" aria-hidden="true"><strong>nexo.</strong><span class="mini-chip"></span><span>•••• 0432</span><small>DIGITAL</small></div><div><span class="product-overline">CARTÃO NEXO</span><h3>Praticidade que acompanha você.</h3><p>Uma visão da área de cartões do banco.</p><button type="button" class="bank-link" data-demo-service="Cartões">Conhecer esta área <span aria-hidden="true">→</span></button></div></div>
-              </section>
-
-              <section class="bank-protection">
-                <svg class="ui-icon" aria-hidden="true"><use href="#i-shield"/></svg><div><h2>Sua segurança vem primeiro</h2><p>Senha é pessoal. Se tiver dúvida, peça orientação antes de continuar.</p></div><button type="button" aria-label="Abrir dicas de segurança" data-open-assistant data-assistant-state="safety"><span aria-hidden="true">→</span></button>
-              </section>
-            </div>
-
-            <aside class="bank-support-column" aria-label="Assistência e acessibilidade">
-              <section class="guide-promo">
-                <span class="new-feature">NEXO LIVRE</span>
-                <span class="guide-promo-icon" aria-hidden="true"><svg class="ui-icon"><use href="#i-chat"/></svg></span>
-                <h2>Seu banco.<br>No seu ritmo.</h2>
-                <p>Um assistente guiado para explicar cada passo com palavras simples.</p>
-                <ul><li>Consulte o saldo fictício</li><li>Entenda saldo e extrato</li><li>Encontre apoio humano simulado</li></ul>
-                <button type="button" data-open-assistant>Iniciar ajuda guiada <span aria-hidden="true">→</span></button>
-                <span class="guide-caption">Sem digitar. Sem informar senha.</span>
-              </section>
-              <section class="access-promo"><span class="access-symbol" aria-hidden="true">◐</span><div><h2>Mais conforto para ler</h2><p>Ative o alto contraste ou ajuste o texto no topo da página.</p><button class="bank-link" type="button" data-toggle-contrast>Ativar alto contraste →</button></div></section>
-            </aside>
-          </div>
-          <details class="research-panel" id="research-panel">
-            <summary>Área da equipe • teste de usabilidade</summary>
-            <div class="research-content">
-              <h2>Observar o percurso, com consentimento</h2>
-              <label class="research-select" for="research-nature">Natureza desta sessão
-                <select id="research-nature"><option value="">Selecione antes de iniciar</option><option value="observed">Teste observado com participante</option><option value="simulated">Ensaio acadêmico simulado</option></select>
-              </label>
-              <p>Teste proposto: encontrar e consultar o saldo fictício e solicitar ajuda humana simulada. Critério do experimento 2: concluir ambas as tarefas em até 120 segundos, sem orientação do moderador.</p>
-              <p>O registro começa somente ao iniciar. Coletamos duração, etapas e escolhas de resposta; nenhum nome, mensagem digitada ou dado bancário. Os registros ficam apenas na memória desta aba. Recarregar a página os apaga. Não há gravação de áudio ou vídeo.</p>
-              <label class="research-check"><input type="checkbox" id="research-consent" /> A pessoa recebeu a explicação e concorda voluntariamente em participar. Pode parar e apagar os registros a qualquer momento.</label>
-              <label class="research-select" for="research-moderator">Experimento 2: o moderador precisou orientar a execução das tarefas?
-                <select id="research-moderator" disabled><option value="pending">Não avaliado</option><option value="yes">Sim</option><option value="no">Não</option></select>
-              </label>
-              <fieldset id="research-observations" disabled>
-                <legend>Observações da equipe — preencher durante a sessão</legend>
-                <p>Experimento 1: pergunte “Para que serve este assistente?” e “Em que situação ele seria útil para você?”. Avalie a resposta sem sugerir o que dizer e sem transcrevê-la aqui.</p>
-                <div id="research-experiment1"></div>
-                <p><strong>Experimento 3:</strong> marque as condições realmente utilizadas e observe os três percursos. Não deduza resultados a partir dos cliques.</p>
-                <div id="research-conditions" class="research-check-grid"></div>
-                <div id="research-experiment3"></div>
-                <h3>Dificuldades observadas</h3>
-                <p>Marque somente o que foi observado. Lista vazia não significa que todas as condições foram verificadas.</p>
-                <div id="research-difficulties" class="research-check-grid"></div>
-              </fieldset>
-              <div class="research-actions">
-                <button class="primary-button" type="button" id="research-start">Iniciar teste</button>
-                <button class="secondary-button" type="button" id="research-finish" disabled>Encerrar e ver resultado</button>
-                <button class="secondary-button" type="button" id="research-discard">Retirar consentimento e apagar</button>
-                <button class="secondary-button" type="button" id="research-export" disabled>Baixar registro JSON</button>
-              </div>
-              <p id="research-status" role="status" aria-atomic="true">Nenhum teste em andamento. Nenhuma ação está sendo registrada.</p>
-              <p id="research-clock" hidden></p>
-              <div id="research-result"></div>
-              <p class="research-limits">O resultado é de uma sessão, não uma aprovação de usabilidade. A conclusão do percurso não demonstra compreensão, acessibilidade ou autonomia por si só. A equipe deve complementar com observação, perguntas abertas e testes com pessoas reais. Baixar o JSON salva uma cópia no dispositivo; apagar aqui não remove cópias já baixadas.</p>
-            </div>
-          </details>
-          <footer class="bank-page-footer"><span><strong>Banco Nexo</strong> · IncluiTech · Equipe 4</span><span>Protótipo acadêmico • dados fictícios</span></footer>
-        </section>
-      </main>
-      <nav class="mobile-bank-nav" aria-label="Navegação principal"><a href="#visao-geral" aria-current="page"><svg class="ui-icon" aria-hidden="true"><use href="#i-home"/></svg>Início</a><button type="button" data-demo-service="Cartões"><svg class="ui-icon" aria-hidden="true"><use href="#i-card"/></svg>Cartões</button><button type="button" data-open-assistant><svg class="ui-icon" aria-hidden="true"><use href="#i-chat"/></svg>Ajuda guiada</button><button type="button" data-open-assistant data-assistant-state="safety"><svg class="ui-icon" aria-hidden="true"><use href="#i-shield"/></svg>Segurança</button></nav>
-    </div>
-
-    <div id="assistant-overlay" class="assistant-overlay" hidden>
-      <section class="assistant-drawer" role="dialog" aria-modal="true" aria-labelledby="assistant-drawer-title">
-        <div class="drawer-topline">
-          <span>Banco Nexo <span aria-hidden="true">/</span> Ajuda</span>
-          <button class="contrast-button drawer-contrast" id="drawer-contrast" type="button" aria-pressed="false">
-            <span class="contrast-symbol" aria-hidden="true"></span>
-            <span>Alto contraste</span><span class="contrast-state" data-contrast-status>Desativado</span>
-          </button>
-          <button class="close-button" id="close-assistant" type="button" aria-label="Fechar a ajuda e voltar ao painel">
-            <span aria-hidden="true">×</span>
-            Fechar
-          </button>
-        </div>
-
-        <div class="assistant-header">
-          <div class="assistant-title-group">
-            <span class="assistant-avatar" aria-hidden="true">NL</span>
-            <div>
-              <p class="section-kicker">Assistente guiado</p>
-              <h2 id="assistant-drawer-title" tabindex="-1">Nexo Livre</h2>
-            </div>
-          </div>
-          <div class="connection-status" id="connection-status">
-            <span class="connection-dot" aria-hidden="true"></span>
-            <span>Conexão de demonstração ativa</span>
-          </div>
-        </div>
-
-        <div class="drawer-demo-note" role="note">
-          <span aria-hidden="true">i</span>
-          <p>Você está em uma demonstração. Não informe dados pessoais.<strong id="research-indicator" hidden> Teste consentido em andamento. <button id="research-stop-inside" class="text-button" type="button">Parar teste e apagar registros</button></strong></p>
-        </div>
-
-        <div class="conversation-wrapper">
-          <div id="conversation" class="conversation" aria-live="off" aria-label="Conversa com o assistente Nexo Livre"></div>
-          <details class="keyword-chat">
-            <summary>Recursos complementares • fora do recorte original</summary>
-            <p>O MVP do relatório tem quatro opções. Você pode explorar também o extrato fictício, o passo a passo e a digitação opcional.</p>
-            <div class="inline-actions"><button class="secondary-button" type="button" data-action="statement">Ver extrato de exemplo</button><button class="secondary-button" type="button" data-action="walkthrough-menu">Orientação passo a passo</button></div>
-            <form id="keyword-form">
-              <label for="keyword-input">Como posso ajudar? <span>(opcional)</span></label>
-              <p id="keyword-hint">Exemplos: saldo, extrato, segurança ou atendente. Não informe dados pessoais. Respostas por palavras-chave, sem IA.</p>
-              <div class="keyword-entry"><input id="keyword-input" type="text" maxlength="120" autocomplete="off" aria-describedby="keyword-hint" placeholder="Ex.: quero consultar meu saldo" /><button class="primary-button" type="submit">Enviar</button></div>
-            </form>
-          </details>
-          <p id="live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-        </div>
-
-        <div class="drawer-utility">
-          <button class="text-button" id="connection-test" type="button">
-            <span aria-hidden="true">↯</span>
-            Simular conexão instável
-          </button>
-          <span>Sem dados enviados</span>
-        </div>
-
-        <nav class="assistant-dock" aria-label="Ações sempre disponíveis no assistente">
-          <button class="secondary-button" type="button" data-action="back">Voltar</button>
-          <button class="secondary-button" type="button" data-action="home">
-            <span aria-hidden="true">⌂</span>
-            Início
-          </button>
-          <button class="primary-button" type="button" data-action="help">
-            <span aria-hidden="true">?</span>
-            Pedir ajuda
-          </button>
-        </nav>
-      </section>
-    </div>
-
-    <script src="assets/js/keyword-router.js"></script>
-    <script src="assets/js/data/statement-data.js"></script>
-    <script src="assets/js/test-session.js"></script>
-    <script src="assets/js/research-assessment.js"></script>
-    <script src="assets/js/app.js"></script>
-  </body>
+      <div class="chat-bottom">
+        <div class="topic-strip" aria-label="Outros assuntos"><button type="button" class="suggestion" data-topic="payment">Pagar</button><button type="button" class="suggestion" data-topic="transfer">Transferências</button><button type="button" class="suggestion" data-topic="cards">Cartões</button><button type="button" class="suggestion" data-topic="safety">Segurança</button></div>
+        <form id="chat-form" class="chat-composer">
+          <label class="sr-only" for="chat-input">Mensagem para o assistente</label>
+          <input id="chat-input" name="message" type="text" maxlength="180" placeholder="Mensagem" autocomplete="off" aria-describedby="chat-disclaimer" />
+          <button id="chat-send" type="submit" aria-label="Enviar mensagem" disabled><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
+        </form>
+        <p id="chat-disclaimer">Chatbot por palavras-chave, sem IA. Não informe dados pessoais. Nenhuma operação real é realizada.</p>
+        <p id="chat-status" class="sr-only" role="status"></p>
+      </div>
+    </section>
+  </div>
+  <script src="assets/js/data/statement-data.js"></script>
+  <script src="assets/js/chat-engine.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
 </html>
