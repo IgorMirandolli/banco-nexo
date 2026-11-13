@@ -23,6 +23,7 @@
     <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 3 19 9-19 9 4-9-4-9Z M7 12h15"/></symbol>
     <symbol id="i-support" viewBox="0 0 24 24"><path d="M3 5h18v5a2 2 0 0 0 0 4v5H3v-5a2 2 0 0 0 0-4V5Z M15 5v3 M15 11v2 M15 16v3 M7 9h4 M7 13h4"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14 M19 5 5 19"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2 M12 19v3 M8 22h8"/></symbol>
   </defs></svg>
 
   <div id="bank-app">
@@ -100,6 +101,12 @@
         </div>
       </header>
       <div class="chat-scroll" id="chat-scroll">
+        <section id="voice-consent" class="voice-consent" aria-labelledby="voice-consent-title" hidden>
+          <h3 id="voice-consent-title" tabindex="-1">Consultar usando a voz</h3>
+          <p id="voice-consent-text">Ao ativar, o navegador pedirá acesso ao microfone e poderá enviar sua fala ao serviço de reconhecimento do fornecedor. O áudio pode depender de internet. O protótipo não salva gravações. Não fale dados pessoais. A voz serve só para consultas e não confirma operações nem abre chamados.</p>
+          <label class="voice-read-option"><input id="voice-auto-read" type="checkbox" checked /> Ouvir a resposta automaticamente após minha consulta por voz</label>
+          <div class="voice-consent-actions"><button type="button" id="voice-explain">Ouvir explicação</button><button type="button" id="voice-allow">Ativar e falar</button><button type="button" id="voice-cancel">Agora não</button></div>
+        </section>
         <div class="chat-welcome" id="chat-welcome">
           <span class="welcome-symbol" aria-hidden="true"><svg class="icon"><use href="#i-nexo"/></svg></span>
           <h3>Olá, Joana!<br>Como posso te ajudar?</h3>
@@ -117,9 +124,11 @@
         <form id="chat-form" class="chat-composer">
           <label class="sr-only" for="chat-input">Mensagem para o assistente</label>
           <input id="chat-input" name="message" type="text" maxlength="180" placeholder="Mensagem" autocomplete="off" aria-describedby="chat-disclaimer" />
+          <button id="voice-mic" type="button" class="voice-mic" aria-label="Consultar por voz" aria-pressed="false" aria-controls="voice-consent" title="Consultar por voz"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg></button>
           <button id="chat-send" type="submit" aria-label="Enviar mensagem" disabled><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
         </form>
-        <p id="chat-disclaimer">Chatbot por palavras-chave, sem IA. Não informe dados pessoais. Nenhuma operação real é realizada.</p>
+        <div class="voice-tools"><span id="voice-status" role="status" aria-atomic="true">Voz opcional, apenas para consultas.</span><button id="voice-stop" type="button" disabled>Parar áudio</button><button id="voice-disable" type="button" hidden>Desativar voz</button></div>
+        <p id="chat-disclaimer">Chatbot por palavras-chave. Não informe dados pessoais. O áudio, quando autorizado, pode ser processado pelo serviço do navegador.</p>
         <p id="chat-status" class="sr-only" role="status"></p>
       </div>
     </section>
@@ -127,6 +136,7 @@
   <script src="assets/js/data/statement-data.js"></script>
   <script src="assets/js/transactions.js"></script>
   <script src="assets/js/chat-engine.js"></script>
+  <script src="assets/js/voice.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>

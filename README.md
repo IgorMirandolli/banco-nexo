@@ -17,8 +17,10 @@ O novo **Meu Assistente Nexo** tem:
 - Reconhecimento local de palavras-chave e respostas predefinidas.
 - Opção de iniciar uma nova conversa.
 - Acesso às preferências de fonte e contraste no menu de três pontos.
+- Consulta por voz opcional, com consentimento antes do microfone.
+- Leitura das respostas em português, com controles para repetir e parar.
 
-Não utiliza IA, conta de serviço externo ou API.
+O chatbot usa respostas predefinidas e não requer conta de serviço nem chave de API. A voz utiliza os recursos do navegador e pode depender de serviços do fornecedor.
 
 ## Assuntos atendidos
 
@@ -52,6 +54,33 @@ Use **Reiniciar simulação**, no rodapé, e confirme para restaurar os dados in
 
 ## Abrir o projeto
 
+### Com voz
+
+Com Node.js 24 ou superior instalado, execute na pasta do projeto:
+
+```powershell
+npm start
+```
+
+Abra **http://localhost:5500**. Não é necessário executar `npm install`. Use `Ctrl + C` no terminal para encerrar o servidor. Ele escuta apenas na máquina local.
+
+Para usar o microfone:
+
+1. Abra o chat e toque no ícone de microfone.
+2. Leia ou ouça a explicação e escolha **Ativar e falar**.
+3. Autorize o microfone no navegador, se solicitado.
+4. Diga, por exemplo, **“quero ver meu extrato”**, **“qual é meu saldo?”** ou **“onde fica o Pix?”**.
+
+A fala é usada apenas para consultar informações e receber orientações no chat. Não abre áreas automaticamente, preenche formulários, confirma operações, reinicia dados ou abre chamados.
+
+Cada captura aceita uma consulta e termina após o resultado, interrupção ou até 15 segundos. Você pode parar a captura e usar **Desativar voz** para retirar a autorização do protótipo nesta página. Isso não altera a permissão geral do navegador.
+
+Respostas às consultas por voz podem ser lidas automaticamente, conforme a opção apresentada antes de ativar. Cada resposta também oferece **Ouvir resposta**, quando o navegador permite leitura, e o controle **Parar áudio** interrompe a reprodução. Fechar ou limpar o chat, sair da página ou ocultar a aba interrompe a voz.
+
+O suporte varia conforme o navegador, o dispositivo, as vozes instaladas e a conectividade. O serviço de reconhecimento pode enviar o áudio ao fornecedor do navegador. Não fale dados pessoais. O protótipo não salva gravações, e a autorização de voz não é persistida. Se houver falha, as sugestões e a digitação continuam disponíveis.
+
+### Sem voz, abrindo o arquivo
+
 Abra a pasta no VS Code e execute no terminal PowerShell:
 
 ```powershell
@@ -61,6 +90,8 @@ Start-Process .\index.html
 Também é possível abrir `index.html` com dois cliques ou usar **Open with Live Server**, se a extensão já estiver instalada.
 
 Não é necessário executar `npm install`, instalar dependências ou compilar. Mantenha a pasta `assets` junto do HTML. Depois de alterações, use `Ctrl + F5` para recarregar.
+
+Ao abrir como arquivo (`file://`), o reconhecimento de fala fica desabilitado com uma orientação para usar o servidor local. Live Server também pode ser usado para testar voz.
 
 ## Acessibilidade
 
@@ -77,7 +108,7 @@ Todos os valores e movimentações são fictícios. Pagamentos, Pix e transferê
 
 O chat orienta e abre as áreas demonstrativas do painel. Não solicita dados bancários nem consulta contas reais. Mensagens com padrões evidentes de dados pessoais, como CPF, endereço de e-mail ou senha declarada, recebem orientação sem serem adicionadas ao histórico. Essa checagem é limitada; não informe informações pessoais mesmo assim.
 
-A conversa fica somente na memória da página, limitada às últimas 40 mensagens, e é apagada ao recarregar ou selecionar **Nova conversa**. Fechar e reabrir a janela preserva a conversa enquanto a página permanece aberta. Nenhuma mensagem é enviada a servidores. Apenas a preferência de alto contraste é salva localmente.
+A conversa fica somente na memória da página, limitada às últimas 40 mensagens, e é apagada ao recarregar ou selecionar **Nova conversa**. Fechar e reabrir a janela preserva a conversa enquanto a página permanece aberta. O código do chatbot não envia mensagens a um backend. Ao autorizar voz, o navegador pode processar o áudio e a leitura por serviços do seu fornecedor. Apenas a preferência de alto contraste é salva localmente.
 
 ## Organização
 
@@ -92,6 +123,7 @@ assets/
     app.js                     Interface, conversa e preferências
     chat-engine.js             Reconhecimento de assuntos e respostas
     transactions.js            Conta simulada, validações e comprovantes
+    voice.js                   Captura consentida e leitura de respostas
     data/
       statement-data.js        Movimentações fictícias
 tests/
@@ -99,6 +131,10 @@ tests/
   chat-interface.test.cjs       Fluxos com DOM mínimo e referências do HTML
   statement-data.test.cjs       Coerência dos valores do extrato
   transactions.test.cjs         Débitos, confirmações, cancelamento e reinício
+  voice.test.cjs                Consentimento, captura, leitura e erros de voz
+  server.test.cjs               Restrição dos caminhos do servidor local
+scripts/
+  serve.cjs                    Servidor local sem dependências
 docs/
   GUIA-VALIDACAO.md             Verificação da versão experimental
   images/                      Capturas preservadas da versão anterior

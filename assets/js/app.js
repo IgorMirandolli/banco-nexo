@@ -17,6 +17,29 @@
   var lastTopic = "";
   var scale = 100;
   var highContrast = false;
+  var voiceMic = document.getElementById("voice-mic");
+  var voiceStatus = document.getElementById("voice-status");
+  var voiceConsent = document.getElementById("voice-consent");
+  var voiceGranted = false;
+  var voiceState = "idle";
+  var voice = window.NexoVoice.create(window, {
+    onTranscript: function (text) { if (!overlay.hidden && voiceGranted) sendText(text, true); },
+    onStatus: function (text) { voiceStatus.textContent = text; },
+    onState: function (state) {
+      voiceState = state;
+      var listening = state === "starting" || state === "listening";
+      voiceMic.setAttribute("aria-pressed", String(listening));
+      voiceMic.setAttribute("aria-label", listening ? "Parar captura de voz" : "Consultar por voz");
+      voiceMic.classList.toggle("is-listening", listening);
+      document.getElementById("voice-stop").disabled = state === "idle";
+    }
+  });
+  if (!voice.canListen) {
+    voiceMic.disabled = true;
+    voiceStatus.textContent = voice.file ? "Para usar voz, inicie com npm start e abra http://localhost:5500. A leitura de respostas continua disponível." : "Reconhecimento de fala indisponível neste navegador. Use os botões ou texto.";
+  }
+  document.getElementById("voice-explain").disabled = !voice.canRead;
+  document.getElementById("voice-auto-read").disabled = !voice.canRead;
 
   function element(tag, className, text) {
     var node = document.createElement(tag);
@@ -216,6 +239,7 @@
     document.getElementById("service-title").textContent = "Reiniciar simulação?";
     content.append(element("p", "panel-description", "Isso restaura o saldo fictício para R$ 1.250,00 e remove as operações e a conversa desta sessão."));
     content.append(actionButton("Confirmar reinício", function () {
+      voice.stop();
       account.reset();
       updateBalance();
       log.replaceChildren();
@@ -291,6 +315,9 @@
     if (topic) sendTopic(topic);
   }
   function closeChat() {
+    voice.stop();
+    voiceConsent.hidden = true;
+    if (log.childElementCount === 0) welcome.hidden = false;
     overlay.hidden = true;
     bank.inert = false;
     settings.open = false;
@@ -303,6 +330,7 @@
     article.append(element("span", "sr-only", author === "user" ? "Você: " : "Assistente Nexo: "));
     if (author === "user") article.append(element("p", "", text));
     else {
+      var spokenText = [reply.title].concat(reply.paragraphs || [], reply.steps || []);
       article.append(element("h3", "", reply.title));
       (reply.paragraphs || []).forEach(function (paragraph) { article.append(element("p", "", paragraph)); });
       if (reply.steps) {
@@ -314,6 +342,11 @@
         article.append(element("p", "opening-balance", "Saldo inicial: " + money(statement.openingCents)));
         article.append(statementList());
         article.append(element("p", "reply-total", "Saldo final fictício: " + money(account.snapshot().closingCents)));
+        spokenText.push("Saldo inicial: " + money(statement.openingCents));
+        account.snapshot().entries.forEach(function (entry) {
+          spokenText.push(entry.date + ". " + entry.label + ". " + (entry.amountCents > 0 ? "Entrada de " : "Saída de ") + money(Math.abs(entry.amountCents)));
+        });
+        spokenText.push("Saldo final fictício: " + money(account.snapshot().closingCents));
       }
       if (reply.actions) {
         var actions = element("div", "reply-actions");
@@ -326,24 +359,35 @@
         });
         article.append(actions);
       }
+      if (voice.canRead) {
+        var read = element("button", "reply-read", "Ouvir resposta");
+        read.type = "button";
+        read.addEventListener("click", function () { voice.speak(spokenText.join(". ")); });
+        article.append(read);
+      }
     }
     log.append(article);
     while (log.childElementCount > 40) log.firstElementChild.remove();
     document.getElementById("chat-scroll").scrollTop = document.getElementById("chat-scroll").scrollHeight;
+    return author === "user" ? "" : spokenText.join(". ");
   }
   function sendTopic(topic) {
     if (!Object.prototype.hasOwnProperty.call(engine.topics, topic)) return;
+    voice.stop();
     addMessage("user", engine.topics[topic]);
     addMessage("bot", "", engine.response(topic, account.snapshot()));
     lastTopic = topic;
     settings.open = false;
   }
-  function sendText(text) {
+  function sendText(text, byVoice) {
     var value = String(text || "").trim().slice(0, 180);
     if (!value) return;
-    var topic = engine.classify(value, lastTopic);
+    voice.stop();
+    var result = byVoice ? engine.voiceResponse(value, lastTopic, account.snapshot()) : null;
+    var topic = result ? result.topic : engine.classify(value, lastTopic);
     if (topic !== "private") addMessage("user", value);
-    addMessage("bot", "", engine.response(topic, account.snapshot()));
+    var spoken = addMessage("bot", "", result ? result.reply : engine.response(topic, account.snapshot()));
+    if (byVoice && voice.canRead && document.getElementById("voice-auto-read").checked) voice.speak(spoken);
     if (Object.prototype.hasOwnProperty.call(engine.topics, topic)) lastTopic = topic;
   }
 
@@ -379,6 +423,8 @@
   document.getElementById("chat-close").addEventListener("click", closeChat);
   overlay.addEventListener("click", function (event) { if (event.target === overlay) closeChat(); });
   document.getElementById("chat-reset").addEventListener("click", function () {
+    voice.stop();
+    voiceConsent.hidden = true;
     log.replaceChildren();
     welcome.hidden = false;
     input.value = "";
@@ -388,6 +434,43 @@
     document.getElementById("chat-title").focus({ preventScroll: true });
     announce("Nova conversa iniciada.");
   });
+  voiceMic.addEventListener("click", function () {
+    settings.open = false;
+    if (voiceState === "starting" || voiceState === "listening") { voice.stop("Captura interrompida."); return; }
+    if (voiceGranted) { voice.start(true); return; }
+    voice.stop();
+    voiceConsent.hidden = false;
+    welcome.hidden = true;
+    document.getElementById("voice-consent-title").focus();
+    voiceConsent.scrollIntoView({ behavior: "instant", block: "nearest" });
+  });
+  document.getElementById("voice-explain").addEventListener("click", function () {
+    voice.speak(document.getElementById("voice-consent-text").textContent + " Para concordar e falar, use Ativar e falar. Se preferir, escolha Agora não.");
+  });
+  document.getElementById("voice-allow").addEventListener("click", function () {
+    voiceGranted = true;
+    voiceConsent.hidden = true;
+    document.getElementById("voice-disable").hidden = false;
+    if (log.childElementCount === 0) welcome.hidden = false;
+    voice.start(true);
+    voiceMic.focus();
+  });
+  document.getElementById("voice-cancel").addEventListener("click", function () {
+    voice.stop("O microfone não foi ativado.");
+    voiceConsent.hidden = true;
+    if (log.childElementCount === 0) welcome.hidden = false;
+    voiceMic.focus();
+  });
+  document.getElementById("voice-disable").addEventListener("click", function () {
+    voiceGranted = false;
+    voice.stop("Voz desativada nesta página. O microfone só volta a ser usado após uma nova autorização aqui.");
+    voiceConsent.hidden = true;
+    this.hidden = true;
+    voiceMic.focus();
+  });
+  document.getElementById("voice-stop").addEventListener("click", function () { voice.stop("Áudio e captura interrompidos."); voiceMic.focus(); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) voice.stop(); });
+  window.addEventListener("pagehide", function () { voice.stop(); });
   document.getElementById("balance-visibility").addEventListener("click", function () {
     var hidden = this.getAttribute("aria-pressed") !== "true";
     this.setAttribute("aria-pressed", String(hidden));

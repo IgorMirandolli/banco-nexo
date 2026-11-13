@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-function setup() {
+function setup(extras = {}) {
   const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
   const nodes = new Map();
   let doc;
@@ -48,7 +48,7 @@ function setup() {
   node("font-plus").dataset.font = "10";
   node("chat-overlay").hidden = true;
   const writes = [];
-  const context = { window: { NexoChat: require("../assets/js/chat-engine.js"), NexoStatement: require("../assets/js/data/statement-data.js"), NexoTransactions: require("../assets/js/transactions.js") }, document: doc, localStorage: { getItem: () => null, setItem: (...args) => writes.push(args) } };
+  const context = { window: { NexoChat: require("../assets/js/chat-engine.js"), NexoStatement: require("../assets/js/data/statement-data.js"), NexoTransactions: require("../assets/js/transactions.js"), NexoVoice: require("../assets/js/voice.js"), addEventListener() {}, ...extras }, document: doc, localStorage: { getItem: () => null, setItem: (...args) => writes.push(args) } };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../assets/js/app.js"), "utf8"), context);
   function click(data) {
     const button = new Element("button");
@@ -162,4 +162,36 @@ test("cancelar e corrigir valores não descontam do saldo", () => {
   form.listeners.submit({ preventDefault() {} });
   find(content, item => item.tag === "button" && item.textContent === "Cancelar").listeners.click();
   assert.match(node("dashboard-balance").textContent, /1\.250,00/);
+});
+test("voz requer escolha explícita, permanece no chatbot e não altera operações", () => {
+  const instances = [];
+  class Recognition {
+    constructor() { instances.push(this); }
+    start() { this.onstart(); }
+    abort() {}
+  }
+  const { node, click } = setup({
+    SpeechRecognition: Recognition, location: { protocol: "http:" }, isSecureContext: true,
+    setTimeout: () => 1, clearTimeout() {}
+  });
+  click({ openChat: "" });
+  node("voice-mic").listeners.click();
+  assert.equal(instances.length, 0, "a explicação não ativa o microfone");
+  node("voice-cancel").listeners.click();
+  assert.equal(instances.length, 0);
+  node("voice-mic").listeners.click();
+  node("voice-allow").listeners.click();
+  instances[0].onresult({ results: [[{ transcript: "onde fica o pix" }]] });
+  assert.match(node("chat-log").textContent, /Onde encontrar Pix/);
+  assert.equal(node("service-title").textContent, "Extrato");
+  assert.equal(node("chat-overlay").hidden, false);
+  node("voice-mic").listeners.click();
+  instances[1].onresult({ results: [[{ transcript: "confirme transferência" }]] });
+  assert.match(node("chat-log").textContent, /apenas consultas/);
+  assert.match(node("dashboard-balance").textContent, /1\.250,00/);
+  node("voice-mic").listeners.click();
+  node("chat-close").listeners.click();
+  const count = node("chat-log").childElementCount;
+  instances[2].onresult({ results: [[{ transcript: "saldo" }]] });
+  assert.equal(node("chat-log").childElementCount, count, "fechar descarta respostas atrasadas");
 });

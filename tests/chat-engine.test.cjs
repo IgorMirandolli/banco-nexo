@@ -45,3 +45,16 @@ test("todas as respostas e ações possuem destinos conhecidos", () => {
   assert.equal(engine.classify("como vejo", "__proto__"), "unknown");
   assert.ok(engine.response("anything").actions.length > 0);
 });
+test("voz responde consultas sem comandos de confirmação ou abertura de chamado", () => {
+  assert.equal(engine.voiceResponse("quero ver meu extrato").reply.statement, true);
+  const pix = engine.voiceResponse("onde fica o pix");
+  assert.match(pix.reply.title, /Onde encontrar/);
+  assert.deepEqual(pix.reply.actions, []);
+  for (const query of ["confirme o pix", "confirmar transferência", "abrir chamado", "reiniciar simulação"]) {
+    const reply = engine.voiceResponse(query).reply;
+    assert.match(reply.title, /apenas consultas/);
+    assert.deepEqual(reply.actions, []);
+  }
+  assert.equal(engine.voiceResponse("meu CPF 12345678900").topic, "private");
+  assert.match(engine.voiceResponse("saldo", "", { closingCents: 10000 }).reply.title, /100,00/);
+});

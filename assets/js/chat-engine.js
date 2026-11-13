@@ -76,7 +76,19 @@
         return { title: "Ainda não entendi sua dúvida", paragraphs: ["Sou um chatbot simples por palavras-chave. Tente escrever “extrato”, “pagar”, “Pix”, “transferência” ou “cartão”, ou escolha uma opção abaixo."], actions: [action("statement"), action("payment"), action("pix"), action("transfer"), action("cards"), action("support")] };
     }
   }
-  var api = { topics: topics, classify: classify, response: response, privateInput: privateInput };
+  function voiceResponse(message, context, account) {
+    var topic = classify(message, context);
+    var normalized = String(message).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    if (topic !== "private" && (topic === "support" || /\b(confirmar|confirme|confirmo|envie|pague|transfira|reiniciar|apagar)\b/.test(normalized))) {
+      return { topic: "voice-restricted", reply: { title: "Por voz, apenas consultas e orientações", paragraphs: ["Não confirmo operações, não altero dados e não abro chamados por comando de voz. Para isso, use os botões e confira as informações na tela.", "Você pode dizer: quero ver meu extrato, qual é meu saldo ou onde fica o Pix."], actions: [] } };
+    }
+    var locations = { pix: ["Pix", "Pix"], payment: ["Pagamentos", "Pagar"], transfer: ["Transferências", "Transferências"] };
+    if (has(locations, topic)) {
+      return { topic: topic, reply: { title: "Onde encontrar " + locations[topic][0], paragraphs: ["Na tela principal do banco, procure a seção Seu dia a dia e escolha " + locations[topic][1] + ".", "Esta resposta é apenas uma orientação. Nenhuma área, operação ou confirmação foi acionada pela sua voz."], actions: [] } };
+    }
+    return { topic: topic, reply: response(topic, account) };
+  }
+  var api = { topics: topics, classify: classify, response: response, voiceResponse: voiceResponse, privateInput: privateInput };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.NexoChat = api;
 }(typeof window !== "undefined" ? window : this));

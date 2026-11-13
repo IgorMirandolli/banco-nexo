@@ -54,6 +54,20 @@ body.chat-open { overflow: hidden; }
 .chat-composer input::placeholder { color: var(--muted); }
 .chat-composer button { display: grid; place-items: center; min-width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: var(--on-accent); }
 .chat-composer button .icon { width: 22px; height: 22px; }
+.chat-composer .voice-mic { background: var(--soft); color: var(--accent); border: 1px solid var(--border); }
+.chat-composer .voice-mic.is-listening { background: var(--accent); color: var(--on-accent); outline: 3px solid var(--focus); outline-offset: 2px; }
+.voice-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin: 10px 2px 0; }
+.voice-tools > span { flex: 1 1 12rem; font-size: .75rem; color: var(--muted); line-height: 1.5; }
+.voice-tools button, .reply-read { min-height: 44px; padding: 8px 10px; font-size: .8rem; color: var(--accent); background: var(--soft); border: 1px solid var(--border); border-radius: 8px; }
+.reply-read { margin-top: 14px; }
+.voice-consent { padding: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 18px; }
+.voice-consent h3 { margin: 0 0 10px; font-size: 1rem; }
+.voice-consent p { font-size: .85rem; line-height: 1.6; }
+.voice-read-option { display: flex; align-items: flex-start; gap: 10px; font-size: .85rem; margin: 16px 0; }
+.voice-read-option input { flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent); }
+.voice-consent-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.voice-consent-actions button { padding: 10px 12px; background: var(--soft); color: var(--brand); border: 1px solid var(--border); font-size: .85rem; }
+.voice-consent-actions #voice-allow { background: var(--brand); color: var(--on-brand); }
 #chat-disclaimer { color: var(--muted); font-size: .8rem; text-align: center; margin: 10px 8px 0; line-height: 1.5; }
 body.high-contrast .suggestion { border-color: var(--border); }
 body.high-contrast .chat-launcher { border-color: var(--border); }

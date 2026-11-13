@@ -48,6 +48,23 @@ Verificação manual necessária, além dos testes de lógica:
 
 ## Testes locais
 
+### Voz — verificação manual necessária
+
+1. Execute `npm start` e abra `http://localhost:5500`.
+2. Confira que abrir o chat não pede microfone nem captura áudio.
+3. Toque no microfone e em **Agora não**: nenhuma captura deve começar.
+4. Ouça a explicação e escolha **Ativar e falar**. Autorize o navegador manualmente.
+5. Diga “quero ver meu extrato” e confira a resposta dentro do chat, incluindo o saldo atualizado. Teste “onde fica o Pix?”: o chat deve orientar, sem navegar ou executar uma operação.
+6. Diga “confirme o Pix”, “reiniciar simulação” ou “abrir chamado”: o assistente deve explicar que a voz só faz consultas, sem alterar saldo, extrato ou chamados.
+7. Confira leitura automática quando selecionada, **Ouvir resposta**, repetição e **Parar áudio**.
+8. Durante uma captura e uma leitura, feche o chat ou oculte a aba: o áudio deve parar. A captura também deve encerrar em até 15 segundos, sem ficar ouvindo continuamente.
+9. Teste permissão negada, microfone ausente e serviço sem conexão. Deve haver mensagem explicativa, sem tentativas automáticas.
+10. Teste sem suporte à API e abrindo o HTML como arquivo: o recurso deve informar a limitação sem bloquear o chat por texto.
+
+Não interpretar testes com APIs simuladas como prova de captação real ou de entendimento da fala. A compatibilidade e a qualidade da voz precisam ser verificadas no navegador e dispositivo de apresentação. A autorização deve ser feita pela pessoa responsável; o teste não deve coletar senhas ou dados reais.
+
+### Lógica
+
 ```powershell
 npm test
 ```
